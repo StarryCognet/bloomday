@@ -13,6 +13,8 @@ export interface SmoothHandle {
   stop(): void
   start(): void
   destroy(): void
+  /** 内容高度变了之后必须重算滚动上限（Lenis 的上限是初始化时算的） */
+  resize(): void
   /** 供验证工具直接落位 */
   jumpTo(y: number): void
   readonly enabled: boolean
@@ -43,8 +45,13 @@ export function createSmooth(): SmoothHandle {
     lenis.scrollTo(y, { immediate: true })
   }
   ;(window as unknown as { __scrollTo?: (y: number) => void }).__scrollTo = jumpTo
+  // 自检用：把实例暴露出来，才能看到 limit / animatedScroll 这些内部值
+  ;(window as unknown as { __lenis?: unknown }).__lenis = lenis
 
   return {
+    resize() {
+      lenis.resize()
+    },
     stop() {
       running = false
       lenis.stop()

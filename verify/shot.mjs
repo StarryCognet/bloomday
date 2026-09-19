@@ -9,6 +9,7 @@
  * 只用 Node 内置 fetch + WebSocket，零依赖。
  */
 import { writeFile } from 'node:fs/promises'
+import { readFileSync } from 'node:fs'
 
 const PORT = process.env.CDP_PORT ?? '9222'
 const argv = process.argv.slice(2)
@@ -41,7 +42,12 @@ const clickSel = opt.clickSel ?? ''
 /** --burst=0,150,300 ：相对"此刻"的连拍偏移毫秒，用于证明转场中间没有白屏 */
 const burst = opt.burst ? opt.burst.split(',').map(Number) : null
 /** --probe=<js> ：在页面里求值并打印，用于读取音频/CSS 等运行时状态 */
-const probeExpr = opt.probe ?? ''
+/** --probeFile=<路径> ：同上，但从文件读表达式。
+    为什么需要：这个环境的 PowerShell 会把带引号/比较符的长表达式截断，
+    导致探针报 "Unexpected end of input" —— 写进文件就绕开了。 */
+const probeExpr = opt.probeFile
+  ? readFileSync(opt.probeFile, 'utf8')
+  : (opt.probe ?? '')
 /** --scrollSel=<选择器> ：截图前先滚到该元素（长页面取证用） */
 const scrollSel = opt.scrollSel ?? ''
 /** --scrollY=<px> ：直接滚到某个纵向位置（纯数字，绕开命令行引号问题） */
@@ -163,10 +169,12 @@ if (!clickSel && !clickSelAfter && click) {
     为什么需要它：封印期间 html.is-sealed 把 overflow 锁住了，滚动无效 ——
     想在进站后看到下面的幕，必须"先点完再滚"，而这个顺序原来的工具做不到。 */
 if (opt.scrollBefore) {
+  // 不调 Lenis 的程序化 scrollTo（实测它进站后无效），改成派发真实滚轮事件 ——
+  // 那是她实际走的那条路，也因此是唯一能证明"她能滚到底"的方式。
   await send('Runtime.evaluate', {
-    expression: `(window.__scrollTo || function(y){window.scrollTo(0,y)}).call(window, ${Number(opt.scrollBefore)})`,
+    awaitPromise: true,
+    expression: `new Promise(function(r){var n=0;var id=setInterval(function(){window.dispatchEvent(new WheelEvent('wheel',{deltaY:900,bubbles:true,cancelable:true}));if(++n>${Number(opt.scrollBefore) || 16}){clearInterval(id);setTimeout(function(){r(Math.round(window.scrollY))},900)}},60)})`,
   })
-  await sleep(1300)
 }
 
 if (burst) {

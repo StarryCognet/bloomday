@@ -195,8 +195,10 @@ window.addEventListener(
 /** 封印还在的时候锁住滚动：否则她能在蓝板子后面乱划，看不到自己在哪 */
 const smooth = createSmooth()
 
+// 封印期间只用 CSS 锁滚动（html.is-sealed{overflow:hidden}）。
+// 不要再调 smooth.stop()：那是第二套抢滚动权的机制，
+// 和 Lenis 自己的状态机叠在一起会让进站后彻底滚不动（已实测）。
 document.documentElement.classList.add('is-sealed')
-smooth.stop()
 const audio = document.querySelector<HTMLAudioElement>('#bgm')
 // BGM 路径也来自配置源
 if (audio) audio.src = SITE.bgm
@@ -333,10 +335,11 @@ function enter(): void {
 
   void playBreak().then(() => {
     document.documentElement.classList.remove('is-sealed')
-    smooth.start()
     chrome.setActive(0)
     reveals.forEach((r) => r.arm())
     galleryPin.layout()
+    // 钉住改了文档高度，Lenis 的上限必须跟着重算，否则滚不到底部
+    smooth.resize()
     window.scrollTo(0, 0)
     // 祝福幕随时可被读到；这里只把它标成就位
     blessing.setState(blessing.el, 'active')
