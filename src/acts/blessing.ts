@@ -198,6 +198,12 @@ export function createBlessing(el: HTMLElement): ActDefinition {
     const deco = blk.querySelector<HTMLElement>('.blk__deco')
     gsap.killTweensOf([blk, ...ls, ...(deco ? [deco] : [])])
 
+    // 【必须先把"行"恢复可见】setBlockState('future') 把整行设成 opacity:0，
+    // 而 charSlam 只清**字符**的内联样式、从不恢复"行" —— 少了这一句，
+    // slam / lyric / type 这几类字演完仍然看不见，要等整段滚过去被置成
+    // past（走 else 分支）才现出来。实测的真实症状就是这个。
+    gsap.set(ls, { opacity: 1, y: 0, clearProps: 'transform,opacity,filter' })
+
     const tl = gsap.timeline()
     const fade = { opacity: 1, y: 0, duration: 0.6, ease: EASE.drift, clearProps: 'transform,opacity' }
     if (deco) tl.set(deco, { opacity: 1 }, 0)

@@ -1,0 +1,93 @@
+/* 共用放大查看层（礼物卡片 / 30 张图都用它）。
+   挂在 body 上，z-index 高过顶部导航（40）。 */
+
+.viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.viewer.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.viewer__scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--c-ink);
+  opacity: 0.84;
+}
+.viewer__card {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  width: min(86vw, 660px);
+  max-height: 68vh;
+  overflow: hidden;
+  background: var(--c-white);
+  clip-path: var(--clip-card-lg);
+  box-shadow: inset 0 0 0 4px var(--c-ink);
+}
+.viewer__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-height: 68vh;
+  object-fit: contain;
+  background: var(--c-white);
+}
+.viewer__cover {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--c-mid);
+  background-image: radial-gradient(var(--c-white) var(--ht-dot), transparent var(--ht-dot));
+  background-size: var(--ht-size) var(--ht-size);
+}
+.viewer__cover[hidden] {
+  display: none;
+}
+.viewer__cover b {
+  font-size: clamp(1.05rem, 4.4vw, 1.5rem);
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  color: var(--c-white);
+  text-shadow: 2px 2px 0 var(--c-ink);
+}
+.viewer__hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 7%;
+  z-index: 2;
+  margin: 0;
+  text-align: center;
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  color: var(--c-white);
+  opacity: 0.75;
+}
+
+/* ── 卡片可点：给一个"能点"的视觉提示 ─────────────────────── */
+.gcard__frame {
+  cursor: pointer;
+}
+.gcard__frame::after {
+  content: '点击看大图';
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  z-index: 3;
+  padding: 3px 8px;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: var(--c-white);
+  background: var(--c-ink);
+  clip-path: var(--clip-card);
+  opacity: 0.72;
+}

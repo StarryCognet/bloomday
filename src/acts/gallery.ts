@@ -12,6 +12,7 @@
 import gsap from 'gsap'
 import { EASE, halftoneBreathe, skipMotion, slashWipe } from '../motion'
 import type { ActDefinition, ActState } from '../motion/director'
+import type { ViewerHandle } from '../viewer'
 import { SITE } from '../site.config'
 
 /** 内容与素材清单一律来自 src/site.config.ts */
@@ -50,7 +51,7 @@ declare global {
   }
 }
 
-export function createGallery(el: HTMLElement): ActDefinition {
+export function createGallery(el: HTMLElement, viewer: ViewerHandle): ActDefinition {
   el.innerHTML = `
     <div class="gal" id="gal">
       <header class="gal__head">
@@ -156,6 +157,17 @@ export function createGallery(el: HTMLElement): ActDefinition {
     if (!raf) raf = requestAnimationFrame(layout)
   }
   track.addEventListener('scroll', onScroll, { passive: true })
+
+  // 点图看大图（共用放大层）。降级态（图没加载出来）不响应。
+  Array.from(el.querySelectorAll<HTMLElement>('.gcard')).forEach((cardEl, i) => {
+    const item = SITE.gallery[i]
+    const frame = cardEl.querySelector<HTMLElement>('.gcard__frame')
+    if (!item || !frame) return
+    frame.addEventListener('click', () => {
+      if (frame.classList.contains('is-fallback')) return
+      viewer.open(item.src)
+    })
+  })
   window.addEventListener('resize', onScroll)
 
   /* ── 确定性落状态 ───────────────────────────────────── */

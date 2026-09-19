@@ -25,6 +25,7 @@ import { createGalleryPin } from './acts/gallery-pin'
 import { createRibbons } from './ribbons'
 import { createPulse } from './acts/pulse'
 import { createGift } from './acts/gift'
+import { createViewer } from './viewer'
 import { createCaustics } from './acts/caustics'
 
 /** 动效强度由站点入口注入内核 —— 内核不认识 site.config，方向上不能反过来 */
@@ -114,7 +115,10 @@ const nextEl = document.querySelector<HTMLElement>('#act-mv')!
 /** 主视觉在封印底下静静等着被擦出来（初始即 active），不是点击后才凭空出现 */
 const mainVisual = createMainVisual(nextEl)
 const blessing = createBlessing(document.querySelector<HTMLElement>('#act-blessing')!)
-const gallery = createGallery(document.querySelector<HTMLElement>('#act-gallery')!)
+/** 共用放大层：礼物卡片和 30 张图都用它。挂在 body 上，才盖得过顶部导航 */
+const viewer = createViewer()
+
+const gallery = createGallery(document.querySelector<HTMLElement>('#act-gallery')!, viewer)
 const finale = createFinale(document.querySelector<HTMLElement>('#act-finale')!)
 /** 歌词层：常驻悬浮在屏幕下方，跟着 BGM 走 */
 const lyrics = createLyricsLayer(document.querySelector<HTMLAudioElement>('#bgm'))
@@ -144,6 +148,7 @@ const pulse = createPulse(document.getElementById('act-pulse')!, () => analyserN
 const gift = createGift(document.getElementById('act-gift')!)
 void pulse
 void gift
+
 
 /**
  * 在用户手势里挂分析节点。
