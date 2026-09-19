@@ -45,6 +45,7 @@ export function createViewer(): ViewerHandle {
   }
 
   function show(src: string, opts?: { coverText?: string }): void {
+    card.classList.toggle('is-cover', Boolean(opts?.coverText))
     if (opts?.coverText) {
       img.removeAttribute('src')
       coverText.textContent = opts.coverText

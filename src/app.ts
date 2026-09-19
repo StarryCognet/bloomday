@@ -145,7 +145,7 @@ const ribbons = createRibbons(() => analyserNode)
 
 /** 可视化幕 + 礼物盒幕：夹在文案和图片之间，补上中间缺的视觉高点与参与感 */
 const pulse = createPulse(document.getElementById('act-pulse')!, () => analyserNode)
-const gift = createGift(document.getElementById('act-gift')!)
+const gift = createGift(document.getElementById('act-gift')!, viewer)
 void pulse
 void gift
 

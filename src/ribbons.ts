@@ -40,6 +40,18 @@ interface Speck {
   alpha: number
 }
 
+/** 点出来的火花：全局层用，带重力与衰减 */
+interface Spark {
+  x: number
+  y: number
+  vx: number
+  vy: number
+  r: number
+  life: number
+  max: number
+  color: string
+}
+
 const SEG = 22
 
 export function createRibbons(analyser: () => AnalyserNode | null): RibbonsHandle {
@@ -67,12 +79,36 @@ export function createRibbons(analyser: () => AnalyserNode | null): RibbonsHandl
   const MAX_SPECK = 60
   const ribbons: Ribbon[] = []
   const specks: Speck[] = []
+  const sparks: Spark[] = []
   let cssW = 0
   let cssH = 0
   let raf = 0
   let last = 0
   let smooth = 0
   let freq: Uint8Array | null = null
+
+  /** 点哪里炸哪里（全局）：任何时候点屏幕都有一簇粒子回应 */
+  function spawnAt(clientX: number, clientY: number): void {
+    if (skipMotion()) return
+    const colors = [HEX.cyan, HEX.mid, HEX.white]
+    for (let i = 0; i < 26; i++) {
+      const ang = Math.random() * Math.PI * 2
+      const speed = 70 + Math.random() * 330
+      const life = 0.6 + Math.random() * 0.8
+      sparks.push({
+        x: clientX,
+        y: clientY,
+        vx: Math.cos(ang) * speed,
+        vy: Math.sin(ang) * speed,
+        r: 1.4 + Math.random() * 3,
+        life,
+        max: life,
+        color: colors[i % colors.length] ?? HEX.cyan,
+      })
+    }
+  }
+
+  const onPointer = (ev: PointerEvent): void => spawnAt(ev.clientX, ev.clientY)
 
   function resize(): void {
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
@@ -167,7 +203,26 @@ export function createRibbons(analyser: () => AnalyserNode | null): RibbonsHandl
     if (skipMotion()) {
       // 强度 0：清干净，不留半张飘带
       ctx.clearRect(0, 0, cssW, cssH)
-      raf = requestAnimationFrame(frame)
+      // 火花：全局点击的粒子反馈（点哪里炸哪里）
+    for (let i = sparks.length - 1; i >= 0; i--) {
+      const sp = sparks[i]!
+      sp.life -= dt
+      if (sp.life <= 0) {
+        sparks.splice(i, 1)
+        continue
+      }
+      sp.vy += 380 * dt
+      sp.vx *= 1 - 1.2 * dt
+      sp.x += sp.vx * dt
+      sp.y += sp.vy * dt
+      const a = sp.life / sp.max
+      ctx.fillStyle = withAlpha(sp.color, 0.2 + a * 0.7)
+      ctx.beginPath()
+      ctx.arc(sp.x, sp.y, sp.r * (0.4 + a * 0.9), 0, Math.PI * 2)
+      ctx.fill()
+    }
+
+    raf = requestAnimationFrame(frame)
       return
     }
 
@@ -198,12 +253,33 @@ export function createRibbons(analyser: () => AnalyserNode | null): RibbonsHandl
       ctx.fill()
     }
 
+    // 火花：全局点击的粒子反馈（点哪里炸哪里）
+    for (let i = sparks.length - 1; i >= 0; i--) {
+      const sp = sparks[i]!
+      sp.life -= dt
+      if (sp.life <= 0) {
+        sparks.splice(i, 1)
+        continue
+      }
+      sp.vy += 380 * dt
+      sp.vx *= 1 - 1.2 * dt
+      sp.x += sp.vx * dt
+      sp.y += sp.vy * dt
+      const a = sp.life / sp.max
+      ctx.fillStyle = withAlpha(sp.color, 0.2 + a * 0.7)
+      ctx.beginPath()
+      ctx.arc(sp.x, sp.y, sp.r * (0.4 + a * 0.9), 0, Math.PI * 2)
+      ctx.fill()
+    }
+
     raf = requestAnimationFrame(frame)
   }
 
   resize()
   seed()
   window.addEventListener('resize', resize)
+  // 全局：用捕获阶段，任何元素上的点击都不会漏
+  document.addEventListener('pointerdown', onPointer, { capture: true })
   if (allowResident()) raf = requestAnimationFrame(frame)
   else {
     // 不允许常驻：画一帧静帧就停
@@ -218,6 +294,6 @@ export function createRibbons(analyser: () => AnalyserNode | null): RibbonsHandl
       canvas.remove()
     },
     energy: () => smooth,
-    report: () => `飘带 ${ribbons.length} 条 / 星屑 ${specks.length} 粒 · 能量 ${smooth.toFixed(3)}`,
+    report: () => `飘带 ${ribbons.length} 条 / 星屑 ${specks.length} 粒 / 火花 ${sparks.length} 颗 · 能量 ${smooth.toFixed(3)}`,
   }
 }

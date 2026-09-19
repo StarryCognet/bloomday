@@ -91,3 +91,11 @@
   clip-path: var(--clip-card);
   opacity: 0.72;
 }
+
+/* 盖板模式：图片没有 src，就没人给卡片撑高度 —— 它会塌成一条（实测）。
+   这里给一个确定的比例和高度。 */
+.viewer__card.is-cover {
+  width: min(64vw, 330px);
+  aspect-ratio: 3 / 4;
+  max-height: 68vh;
+}

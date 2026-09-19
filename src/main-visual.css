@@ -41,14 +41,12 @@
   opacity: 0.35;
   transform: skewX(var(--skew-base));
 }
+/* 底部这两条斜切带压在 mv 与祝福幕的交界上，看起来像模块分界线 —— 去掉 */
 .mv__slab--b {
-  top: 82%;
-  height: 62px;
-  background: var(--c-mid);
-  opacity: 0.85;
-  transform: skewX(var(--skew-steep));
+  display: none;
 }
 .mv__slab--c {
+  display: none;
   top: 92%;
   height: 20px;
   background: var(--c-cyan);
