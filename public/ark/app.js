@@ -1,4 +1,4 @@
-import { sceneData } from "./scene-data.js";
+import { sceneData } from "./scene-data.js?v=bloomday-2";
 import { evaluateScalar, evaluateVector, quaternionZDegrees } from "./curve-runtime.js";
 import { AudioTimeline, AUDIO_PREFERENCE_KEY } from "./audio-timeline.js";
 
