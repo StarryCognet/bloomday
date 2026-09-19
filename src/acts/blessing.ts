@@ -22,7 +22,7 @@ import {
 import type { ActDefinition, ActState } from '../motion/director'
 import { SITE } from '../site.config'
 
-type Motion = 'slam' | 'slamSlow' | 'wipe' | 'wipeSlam' | 'ripple'
+type Motion = 'slam' | 'slamSlow' | 'wipe' | 'wipeSlam' | 'ripple' | 'lyric' | 'type'
 type Deco = 'slash' | 'halftone' | 'ring'
 
 interface BlockSpec {
@@ -50,8 +50,15 @@ const MOTIONS: Array<Omit<BlockSpec, 'lines'>> = [
 ]
 
 /** 段数由文案决定：哥哥加段/删段都不会让动效错位（按段序取模循环） */
+/** 指定某几段换一种呈现方式（0 起）。改这里就能换段落。 */
+const STYLE_OVERRIDE: Record<number, Motion> = {
+  2: 'lyric', // 「歌里唱『好好吃…』」—— 这句本来就是歌，做成歌词卡
+  3: 'type', // 「以后的事我也想了」—— 情绪最重的一段，打字机更有停顿感
+}
+
 const BLOCKS: BlockSpec[] = SITE.copy.blessing.blocks.map((lines, i) => ({
   ...(MOTIONS[i % MOTIONS.length] as Omit<BlockSpec, 'lines'>),
+  ...(STYLE_OVERRIDE[i] ? { motion: STYLE_OVERRIDE[i] } : {}),
   lines: [...lines],
 }))
 
@@ -140,7 +147,10 @@ export function createBlessing(el: HTMLElement): ActDefinition {
         <p class="bs__lead">${HEAD.lead}</p>
       </header>
       ${BLOCKS.map(
-        (b, i) => `<section class="blk${b.punch ? ' blk--punch' : ''}" data-blk="b${i + 1}">
+        (b, i) =>
+          `<section class="blk${b.punch ? ' blk--punch' : ''}${
+            STYLE_OVERRIDE[i] ? ` blk--${STYLE_OVERRIDE[i]}` : ''
+          }" data-blk="b${i + 1}">
           ${b.deco ? `<span class="blk__deco blk__deco--${b.deco}"></span>` : ''}
           <div class="blk__lines">
             ${b.lines.map((l) => `<p class="blk__line">${l}</p>`).join('')}
@@ -220,6 +230,24 @@ export function createBlessing(el: HTMLElement): ActDefinition {
       case 'ripple':
         tl.add(ripple(blk, { intensity: 0.7, rings: 3 }), 0)
         tl.fromTo(ls, { opacity: 0, y: 30 }, fade, 0.12)
+        break
+      // 歌词卡：逐字依次点亮（步长大，一句被"唱"出来的感觉）
+      case 'lyric':
+        ls.forEach((line, i) => {
+          tl.add(
+            charSlam(line, { direction: 'up', duration: 0.55, intensity: 0.45, stagger: 0.085 }),
+            i * 0.2,
+          )
+        })
+        break
+      // 打字机：逐字显形，位移很小（像是被打出来的，不是被砸出来的）
+      case 'type':
+        ls.forEach((line, i) => {
+          tl.add(
+            charSlam(line, { direction: 'up', duration: 0.4, intensity: 0.18, stagger: 0.11 }),
+            i * 0.42,
+          )
+        })
         break
     }
 

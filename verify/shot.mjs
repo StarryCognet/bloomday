@@ -177,6 +177,16 @@ if (opt.scrollBefore) {
   })
 }
 
+/** --scrollToSel=<选择器> ：闭环滚到某个元素（滚到差 40px 以内才停）。
+    为什么不用数滚轮次数：每次实际位移受 Lenis 阻尼影响，实测约 1012px
+    而不是名义的 810，靠次数一定会滚过头。 */
+if (opt.scrollToSel) {
+  await send('Runtime.evaluate', {
+    awaitPromise: true,
+    expression: `new Promise(function(res){var el=document.querySelector(${JSON.stringify(opt.scrollToSel)});if(!el)return res('NOT_FOUND');var target=el.getBoundingClientRect().top+window.scrollY+el.offsetHeight*0.25;var n=0;var id=setInterval(function(){var d=target-window.scrollY;if(Math.abs(d)<40||n++>60){clearInterval(id);setTimeout(function(){res(Math.round(window.scrollY))},700);return}window.dispatchEvent(new WheelEvent('wheel',{deltaY:Math.max(-900,Math.min(900,d)),bubbles:true,cancelable:true}))},70)})`,
+  })
+}
+
 if (burst) {
   const t0 = Date.now()
   for (const offset of burst) {

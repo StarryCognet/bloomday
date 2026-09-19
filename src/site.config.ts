@@ -100,6 +100,19 @@ export const SITE = {
       ] as string[][],
     },
 
+    /** 第四幕 · 跟着歌跳的可视化（让中间有一个视觉高点，不只是字） */
+    pulse: {
+      label: 'NOW PLAYING',
+      line: '这段就交给歌。',
+    },
+
+    /** 第五幕 · 礼物盒（全程唯一一次"她做了一件事"） */
+    gift: {
+      label: 'ONE MORE THING',
+      line: '还有个东西。点一下。',
+      after: '拿好了。',
+    },
+
     /** 第四幕 · 角色与照片 */
     gallery: {
       eyebrow: 'HER FAVORITES',

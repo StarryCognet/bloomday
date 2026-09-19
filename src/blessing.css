@@ -92,3 +92,56 @@
   /* 尾巴留够：底部 150px 被常驻歌词层占着 */
   height: calc(var(--sp-4) * 3);
 }
+
+/* ── 歌词卡：第 3 段是"歌里唱的那句"，做成歌词的样子 ───────── */
+.blk--lyric {
+  padding: var(--sp-4) 0;
+}
+.blk--lyric .blk__lines {
+  gap: var(--sp-3);
+  align-items: center;
+  text-align: center;
+}
+.blk--lyric .blk__line {
+  font-size: clamp(1.45rem, 6.6vw, 2rem);
+  font-weight: 900;
+  line-height: 1.55;
+  letter-spacing: 0.01em;
+  color: var(--c-mid);
+}
+/* 左侧一道竖线，像歌词本的引号 */
+.blk--lyric::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 12%;
+  bottom: 12%;
+  width: 3px;
+  background: var(--c-cyan);
+}
+
+/* ── 打字机：第 4 段情绪最重，逐字显形 + 末尾光标 ─────────── */
+.blk--type .blk__line {
+  font-size: clamp(1.15rem, 5vw, 1.4rem);
+  line-height: 2.1;
+}
+.blk--type .blk__line:last-child::after {
+  content: '';
+  display: inline-block;
+  width: 0.55em;
+  height: 1.05em;
+  margin-left: 0.12em;
+  vertical-align: -0.18em;
+  background: var(--c-cyan);
+  animation: blk-caret 1s steps(1, end) infinite;
+}
+@keyframes blk-caret {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
+}

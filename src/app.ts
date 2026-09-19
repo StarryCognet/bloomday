@@ -23,6 +23,8 @@ import { createChrome } from './chrome'
 import { createScrollReveal } from './acts/scroll-reveal'
 import { createGalleryPin } from './acts/gallery-pin'
 import { createRibbons } from './ribbons'
+import { createPulse } from './acts/pulse'
+import { createGift } from './acts/gift'
 import { createCaustics } from './acts/caustics'
 
 /** 动效强度由站点入口注入内核 —— 内核不认识 site.config，方向上不能反过来 */
@@ -96,6 +98,8 @@ app.innerHTML = `
   </main>
   <section class="act" id="act-mv"></section>
   <section class="act" id="act-blessing"></section>
+  <section class="act" id="act-pulse"></section>
+  <section class="act" id="act-gift"></section>
   <section class="act" id="act-gallery"></section>
   <section class="act" id="act-finale"></section>
 `
@@ -119,6 +123,8 @@ const lyrics = createLyricsLayer(document.querySelector<HTMLAudioElement>('#bgm'
 const chrome = createChrome([
   { label: '9.19' },
   { label: '祝福' },
+  { label: '律动' },
+  { label: '礼物' },
   { label: '角色' },
   { label: '许愿' },
 ])
@@ -132,6 +138,12 @@ const galleryPin = createGalleryPin(document.getElementById('act-gallery')!, doc
 /** 粒子飘带：能量来自 BGM 的实时频谱 */
 let analyserNode: AnalyserNode | null = null
 const ribbons = createRibbons(() => analyserNode)
+
+/** 可视化幕 + 礼物盒幕：夹在文案和图片之间，补上中间缺的视觉高点与参与感 */
+const pulse = createPulse(document.getElementById('act-pulse')!, () => analyserNode)
+const gift = createGift(document.getElementById('act-gift')!)
+void pulse
+void gift
 
 /**
  * 在用户手势里挂分析节点。
@@ -177,7 +189,7 @@ const reveals = [
 ]
 
 /** 滚动时高亮当前幕 */
-const actEls = ['act-mv', 'act-blessing', 'act-gallery', 'act-finale']
+const actEls = ['act-mv', 'act-blessing', 'act-pulse', 'act-gift', 'act-gallery', 'act-finale']
   .map((id) => document.getElementById(id))
   .filter((e): e is HTMLElement => e !== null)
 window.addEventListener(
