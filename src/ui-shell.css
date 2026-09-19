@@ -1,0 +1,67 @@
+/* 共享 UI 外壳：读数条 / 按钮 / 报告区 —— 演示页与各测试页共用 */
+
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: var(--c-ink);
+  border-left: var(--stroke-heavy) solid var(--c-cyan);
+  padding: var(--sp-2) var(--sp-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.bar__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-3);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.7rem;
+  color: var(--c-cyan);
+}
+.bar__stats b {
+  color: var(--c-white);
+}
+.bar__acts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+
+.btn {
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--c-white);
+  background: var(--c-mid);
+  border: 0;
+  padding: var(--sp-2) var(--sp-3);
+  clip-path: var(--clip-card);
+  cursor: pointer;
+}
+.btn:active {
+  background: var(--c-cyan);
+  color: var(--c-ink);
+}
+.btn--ghost {
+  background: var(--c-deep-2);
+  box-shadow: inset 0 0 0 var(--stroke-hair) var(--c-white-40);
+}
+
+.report {
+  margin: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.66rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  color: var(--c-white-dim);
+}
+.report em {
+  font-style: normal;
+  color: var(--c-cyan);
+}
+.report s {
+  text-decoration: none;
+  color: var(--c-accent);
+}

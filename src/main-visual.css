@@ -1,0 +1,133 @@
+/* 生日主视觉幕 —— 亮底 + 大斜切蓝块，与开屏同一套语言 */
+
+.mv {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--c-white);
+  overflow: hidden;
+}
+
+.mv__collage {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+/* 亮底上网点要用蓝点，白点会消失。
+   但不能铺满整屏：6px 格的点阵盖满全屏会把字压花。
+   用径向遮罩把中间（数字所在处）清空，只在四周留纹理。 */
+.mv__bg {
+  position: absolute;
+  inset: -25%;
+  background-image: radial-gradient(var(--c-mid) var(--ht-dot), transparent var(--ht-dot));
+  background-size: var(--ht-size) var(--ht-size);
+  opacity: 0.14;
+  -webkit-mask-image: radial-gradient(ellipse 62% 46% at 50% 48%, transparent 0%, transparent 46%, var(--c-ink) 100%);
+  mask-image: radial-gradient(ellipse 62% 46% at 50% 48%, transparent 0%, transparent 46%, var(--c-ink) 100%);
+}
+.mv__slab {
+  position: absolute;
+  left: -24%;
+  right: -24%;
+  transform-origin: left center;
+}
+.mv__slab--a {
+  top: 12%;
+  height: 34px;
+  background: var(--c-mid-light);
+  opacity: 0.35;
+  transform: skewX(var(--skew-base));
+}
+.mv__slab--b {
+  top: 82%;
+  height: 62px;
+  background: var(--c-mid);
+  opacity: 0.85;
+  transform: skewX(var(--skew-steep));
+}
+.mv__slab--c {
+  top: 92%;
+  height: 20px;
+  background: var(--c-cyan);
+  opacity: 0.8;
+  transform: skewX(var(--skew-flat));
+}
+
+/* ── 数字主体 ───────────────────────────────────────────── */
+.mv__grid {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 520px;
+  padding: 0 var(--sp-3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+  text-align: center;
+}
+
+.mv__eyebrow {
+  color: var(--c-mid);
+  margin-bottom: var(--sp-3);
+}
+
+.mv__date {
+  position: relative;
+  color: var(--c-white);
+  font-size: clamp(3.6rem, 24vw, 8rem);
+  /* 亮底上的关键：白字必须带硬阴影错位，否则离开蓝色斜块的那几截会消失在白底上
+     （暗底时白压黑天然可见，换亮底就废了）。这就是 P3R logo 的做法。 */
+  text-shadow: 4px 4px 0 var(--c-ink);
+}
+/* 数字压在自己的斜切色块上：拉满字高，别只盖中间一段 */
+.mv__date::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  left: -12%;
+  right: -12%;
+  top: 7%;
+  bottom: 7%;
+  background: var(--c-mid);
+  transform: skewX(var(--skew-steep));
+}
+
+.mv__age {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+  margin: var(--sp-2) 0 0;
+}
+.mv__age-num {
+  position: relative;
+  color: var(--c-cyan);
+  font-size: clamp(3.6rem, 24vw, 8rem);
+  text-shadow: 4px 4px 0 var(--c-ink);
+}
+/* 年龄压在近黑色块上：青字压黑，两色对比拉开；同样拉满字高 */
+.mv__age-num::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  left: -18%;
+  right: -18%;
+  top: 7%;
+  bottom: 7%;
+  background: var(--c-ink);
+  transform: skewX(var(--skew-base));
+}
+.mv__age-unit {
+  font-size: clamp(1.1rem, 4.6vw, 1.5rem);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--c-white);
+}
+
+.mv__title {
+  color: var(--c-ink);
+  margin-top: var(--sp-3);
+  position: relative;
+}

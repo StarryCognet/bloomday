@@ -1,0 +1,6 @@
+/* 滚动显现的逐字单元（只有 inline-block 才吃得到 transform） */
+
+.rv-c {
+  display: inline-block;
+  white-space: pre;
+}

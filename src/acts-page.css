@@ -1,0 +1,189 @@
+/* 幕间总控测试页：全屏幕 + 底部跳幕条 */
+
+html,
+body {
+  scroll-behavior: auto;
+}
+
+.acts {
+  position: relative;
+  z-index: 1;
+}
+
+/* 粒子层常驻在最底下 —— 测试页也按网站真实形态搭 */
+#particles {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.act {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  position: relative;
+  overflow: hidden;
+  padding: var(--sp-4) var(--sp-3);
+}
+
+/* 幕底色走半透明覆盖层，好让底下的粒子透出来。
+   直接给 .act 上不透明底色会把粒子层整个盖掉，那就不是"整站形态"了。 */
+.act::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.45;
+}
+.act[data-act='a1']::before {
+  background: var(--c-deep);
+}
+.act[data-act='a2']::before {
+  background: var(--c-deep-2);
+}
+.act[data-act='a3']::before {
+  background: var(--c-navy);
+}
+.act[data-act='a4']::before {
+  background: var(--c-deep-2);
+}
+.act[data-act='a5']::before {
+  background: var(--c-ink);
+}
+
+.act__inner {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  align-items: center;
+}
+
+.act__no {
+  font-family: var(--font-display);
+  font-size: 3.4rem;
+  line-height: 1;
+  color: var(--c-cyan);
+}
+
+.act__title {
+  font-size: clamp(1.8rem, 9vw, 2.6rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  color: var(--c-white);
+}
+
+.act__body {
+  color: var(--c-white-dim);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+}
+
+/* 每个幕一种底色气质，方便肉眼确认"跳到哪一幕了" */
+.act[data-act='a1'] {
+  background: var(--c-deep);
+}
+.act[data-act='a2'] {
+  background: var(--c-deep-2);
+}
+.act[data-act='a3'] {
+  background: var(--c-navy);
+}
+.act[data-act='a4'] {
+  background: var(--c-deep-2);
+}
+.act[data-act='a5'] {
+  background: var(--c-ink);
+}
+
+.act__slash {
+  position: absolute;
+  left: -30%;
+  right: -30%;
+  height: 40px;
+  background: var(--c-mid);
+  opacity: 0.55;
+  transform: skewX(var(--skew-steep));
+  z-index: 1;
+}
+
+/* 幕 4 的网点层（常驻呼吸用） */
+.act__halftone {
+  position: absolute;
+  inset: -20%;
+  background-image: radial-gradient(var(--c-cyan) var(--ht-dot), transparent var(--ht-dot));
+  background-size: var(--ht-size) var(--ht-size);
+  opacity: 0.3;
+  z-index: 1;
+}
+
+/* 底部跳幕条 */
+.hud {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  background: var(--c-ink);
+  border-top: var(--stroke-bold) solid var(--c-cyan);
+  padding: var(--sp-2) var(--sp-3) calc(var(--sp-2) + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.hud__stats {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.66rem;
+  color: var(--c-cyan);
+  line-height: 1.6;
+}
+.hud__stats b {
+  color: var(--c-white);
+}
+.hud__acts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+}
+.hud .btn {
+  padding: var(--sp-1) var(--sp-2);
+  font-size: 0.68rem;
+}
+.hud__report {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.62rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  color: var(--c-white-dim);
+}
+.hud__report em {
+  font-style: normal;
+  color: var(--c-cyan);
+}
+.hud__report s {
+  text-decoration: none;
+  color: var(--c-accent);
+}
+
+/* 状态徽标：肉眼也能核对 data-act-state */
+.act__badge {
+  position: absolute;
+  top: var(--sp-3);
+  left: var(--sp-3);
+  z-index: 3;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.62rem;
+  color: var(--c-white-dim);
+  padding: 2px 6px;
+  box-shadow: inset 0 0 0 var(--stroke-hair) var(--c-white-12);
+}
+.act[data-act-state='active'] .act__badge {
+  color: var(--c-ink);
+  background: var(--c-cyan);
+}

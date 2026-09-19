@@ -1,0 +1,13 @@
+/* 幕容器的共享契约：每一幕都是一屏正常流区块，页面才能滚。
+   （入场封印是唯一的例外：它 fixed 覆盖在最上层，点击后才让开。）
+
+   底色统一亮底 —— 跟开屏同一个世界。P3R 官网本身就是亮底亮蓝；
+   暗底是它游戏 UI 的做法，不是官网的做法。 */
+
+.act {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: var(--c-white);
+  color: var(--c-ink);
+}

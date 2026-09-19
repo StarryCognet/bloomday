@@ -1,0 +1,72 @@
+/* 歌词层 —— 悬浮在屏幕下方，单行大字 + 中文小字，逐句逐字砸入。
+   亮底版：白底衬 + 深色字，压在任何幕内容上都读得清。 */
+
+.lyr {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  pointer-events: none;
+  padding: 0 var(--sp-3) calc(env(safe-area-inset-bottom, 0px) + 20px);
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+/* 底衬：从白到透明的渐变，保证歌词压在任何背景上都读得清 */
+.lyr__scrim {
+  position: absolute;
+  left: -6%;
+  right: -6%;
+  bottom: 0;
+  height: 190px;
+  background: linear-gradient(to top, var(--c-white) 0%, var(--c-white) 46%, transparent 100%);
+  opacity: 0.94;
+}
+/* P3 的斜切边：一条细的蓝色斜线压在底衬上沿 */
+.lyr__edge {
+  position: absolute;
+  left: -6%;
+  right: -6%;
+  bottom: 150px;
+  height: 2px;
+  background: var(--c-mid);
+  opacity: 0.5;
+  transform: skewX(var(--skew-steep));
+  transform-origin: left center;
+}
+
+.lyr__box {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-bottom: var(--sp-2);
+}
+
+.lyr__jp {
+  margin: 0;
+  font-size: clamp(1.05rem, 4.9vw, 1.45rem);
+  font-weight: 900;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  color: var(--c-ink);
+}
+
+.lyr__cn {
+  margin: 0;
+  font-size: clamp(0.76rem, 3.4vw, 0.9rem);
+  font-weight: 700;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+  color: var(--c-mid);
+}
+
+/* 逐字单元：只有 inline-block 才吃得到 transform */
+.lyr__c {
+  display: inline-block;
+  white-space: pre;
+}

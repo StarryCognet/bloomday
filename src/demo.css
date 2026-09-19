@@ -1,0 +1,171 @@
+/* 原语演示页样式 —— 长期保留的开发页，不是一次性废件 */
+
+.demo {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: var(--sp-3) var(--sp-3) calc(var(--sp-4) * 3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+/* 卡片 */
+.card {
+  background: var(--c-navy);
+  clip-path: var(--clip-card);
+  padding: var(--sp-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.card__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-2);
+}
+.card__no {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  line-height: 1;
+  color: var(--c-cyan);
+}
+.card__hint {
+  font-size: 0.68rem;
+  color: var(--c-white-dim);
+  line-height: 1.6;
+}
+.card__row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+}
+.card__meta {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.64rem;
+  color: var(--c-white-dim);
+}
+
+/* 舞台 */
+.stage {
+  position: relative;
+  height: 150px;
+  background-color: var(--c-deep-2);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+.stage__title {
+  font-size: clamp(2.2rem, 12vw, 3rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--c-white);
+  position: relative;
+  z-index: 2;
+}
+.mt-band {
+  pointer-events: none;
+}
+.mt-ring {
+  pointer-events: none;
+}
+
+/* 原语 3 · 网点层 */
+.halftone-layer {
+  position: absolute;
+  inset: -25%;
+  background-image: radial-gradient(var(--c-cyan) var(--ht-dot), transparent var(--ht-dot));
+  background-size: var(--ht-size) var(--ht-size);
+  opacity: 0.55;
+}
+
+/* 原语 4 · 水波舞台 */
+.stage--ripple {
+  cursor: crosshair;
+}
+
+/* 原语 5 · 视差层 */
+.stage--parallax {
+  perspective: 400px;
+}
+.parallax-layer {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(0.3px);
+}
+.parallax-layer[data-mt-depth='0.4'] {
+  width: 190px;
+  height: 190px;
+  background: var(--c-mid);
+  opacity: 0.55;
+}
+.parallax-layer[data-mt-depth='1'] {
+  width: 120px;
+  height: 120px;
+  background: var(--c-cyan);
+  opacity: 0.5;
+}
+.parallax-layer[data-mt-depth='1.9'] {
+  width: 56px;
+  height: 56px;
+  background: var(--c-white);
+  opacity: 0.9;
+}
+
+/* 原语 6 · 缓动曲线的舞台要放得下全部行，不能被 150px 裁掉 */
+.stage--ease {
+  height: auto;
+  min-height: 150px;
+  padding: var(--sp-2) 0;
+  place-items: stretch;
+}
+
+/* 原语 6 · 缓动曲线 */
+.ease-row {
+  display: grid;
+  grid-template-columns: 4.6rem 1fr;
+  align-items: center;
+  gap: var(--sp-2);
+  width: 100%;
+  padding: 3px 0;
+}
+.ease-row__name {
+  color: var(--c-cyan);
+}
+.ease-row__track {
+  position: relative;
+  height: 14px;
+  background: var(--c-deep);
+  overflow: visible;
+}
+.ease-row__track::before {
+  content: '';
+  position: absolute;
+  inset: 50% 0 auto 0;
+  height: 1px;
+  background: var(--c-white-12);
+}
+.ease-dot {
+  position: absolute;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  margin: -4.5px 0 0 -4.5px;
+  background: var(--c-white);
+  transform: rotate(45deg);
+}
+.ease-dot--mid {
+  background: var(--c-accent);
+  width: 11px;
+  height: 11px;
+  margin: -5.5px 0 0 -5.5px;
+}
+.ease-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  padding: 0 var(--sp-2);
+}

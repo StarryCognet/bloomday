@@ -1,0 +1,92 @@
+/* 常驻 UI 框架 —— 四角标记 / 顶部细导航 / 品牌条。
+   站点级，不属于任何一幕：内容在里面换，外框不动。 */
+
+.chrome {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.chrome.is-hidden {
+  opacity: 0;
+}
+
+/* ── 四角标记 ───────────────────────────────────────────── */
+.chrome__corner {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  opacity: 0.55;
+}
+.chrome__corner--tl {
+  left: 10px;
+  top: 10px;
+  border-left: 2px solid var(--c-ink);
+  border-top: 2px solid var(--c-ink);
+}
+.chrome__corner--tr {
+  right: 10px;
+  top: 10px;
+  border-right: 2px solid var(--c-ink);
+  border-top: 2px solid var(--c-ink);
+}
+.chrome__corner--bl {
+  left: 10px;
+  bottom: 10px;
+  border-left: 2px solid var(--c-ink);
+  border-bottom: 2px solid var(--c-ink);
+}
+.chrome__corner--br {
+  right: 10px;
+  bottom: 10px;
+  border-right: 2px solid var(--c-ink);
+  border-bottom: 2px solid var(--c-ink);
+}
+
+/* ── 品牌条（左上，与开屏同位置）───────────────────────── */
+.chrome__brand {
+  position: absolute;
+  left: 24px;
+  top: 30px;
+  font-size: clamp(0.6rem, 2.6vw, 0.7rem);
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  color: var(--c-ink);
+  opacity: 0.75;
+}
+
+/* ── 顶部细导航：跟着滚动高亮当前幕 ─────────────────────── */
+.chrome__nav {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 26px;
+  display: flex;
+  gap: clamp(10px, 3.4vw, 18px);
+  justify-content: center;
+  flex-wrap: wrap;
+  font-size: clamp(0.62rem, 2.7vw, 0.72rem);
+  letter-spacing: 0.06em;
+  color: var(--c-ink);
+  opacity: 0.5;
+}
+.chrome__nav span {
+  transition: color 0.25s ease, box-shadow 0.25s ease;
+}
+.chrome__nav span.is-on {
+  color: var(--c-mid);
+  font-weight: 800;
+  opacity: 1;
+  box-shadow: 0 6px 0 -4px var(--c-cyan);
+}
+/* 开屏阶段整条 nav 熄灭（那时是封印自己的 nav 在演） */
+.chrome.is-idle .chrome__nav {
+  opacity: 0;
+}
+
+/* 开屏还在时，外框让位给封印自己的标记 */
+.chrome.is-idle .chrome__corner,
+.chrome.is-idle .chrome__brand {
+  opacity: 0;
+}

@@ -1,0 +1,183 @@
+/* 角色与照片幕 —— 钉住 + 竖向滚动驱动横向位移。
+   滚到这一幕就停住不动，继续往下滚 = 图片横向走；走完才放行继续往下滚。 */
+
+.gal {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  /* 顶部留出常驻 chrome（导航/品牌），底部留给歌词层 */
+  /* 底部要留出常驻歌词层的高度（实测它占 694~844），否则标签和进度点被压住 */
+  padding: 74px 0 172px;
+  overflow: hidden;
+}
+
+.gal__head {
+  padding: 0 var(--sp-3);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+.gal__eyebrow {
+  color: var(--c-mid);
+}
+.gal__lead {
+  margin: 0;
+  color: var(--c-ink);
+  font-size: clamp(1.25rem, 5.4vw, 1.7rem);
+  font-weight: 900;
+  line-height: 1.35;
+}
+.gal__hint {
+  color: var(--c-mid);
+  opacity: 0.75;
+}
+
+/* 横向轨道：由竖向滚动驱动 scrollLeft，不给用户拖动 */
+.gal__track {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
+  gap: var(--sp-3);
+  padding: 0 var(--sp-3);
+  overflow: hidden;
+}
+.gal__track::-webkit-scrollbar {
+  display: none;
+}
+
+.gcard {
+  flex: 0 0 68%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  transform-origin: center center;
+}
+
+/* 高度由轨道给、宽度由 76% 给 —— 去掉 aspect-ratio，
+   否则它和 flex 高度会互相争，跟上一版一样量错对象 */
+.gcard__frame {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--c-navy);
+  clip-path: var(--clip-card-lg);
+  box-shadow: inset 0 0 0 var(--stroke-bold) var(--c-ink);
+}
+.gcard__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.gcard__lash {
+  position: absolute;
+  left: -30%;
+  right: -30%;
+  top: 10%;
+  height: 18px;
+  background: var(--c-cyan);
+  opacity: 0.4;
+  transform: skewX(var(--skew-steep));
+  pointer-events: none;
+}
+.gcard__halftone {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(var(--c-white) var(--ht-dot), transparent var(--ht-dot));
+  background-size: var(--ht-size) var(--ht-size);
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+/* ── 降级占位：素材缺失时显示，绝不裂图、绝不空白 ───────── */
+.gcard__fallback {
+  position: absolute;
+  inset: 0;
+  display: none;
+  place-items: center;
+  background: var(--c-mid);
+}
+.gcard__fb-slash {
+  position: absolute;
+  left: -30%;
+  right: -30%;
+  height: 64px;
+  background: var(--c-white);
+  opacity: 0.28;
+  transform: skewX(var(--skew-steep));
+}
+.gcard__fb-name {
+  position: relative;
+  font-size: clamp(1.1rem, 5vw, 1.4rem);
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  color: var(--c-white);
+}
+.gcard__frame.is-fallback .gcard__img {
+  display: none;
+}
+.gcard__frame.is-fallback .gcard__fallback {
+  display: grid;
+}
+.gcard__frame.is-loaded .gcard__fallback {
+  display: none;
+}
+
+/* ── 标注条 ─────────────────────────────────────────────── */
+.gcard__tag {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--c-white);
+  clip-path: var(--clip-card);
+  box-shadow: inset 0 0 0 var(--stroke-bold) var(--c-ink);
+}
+.gcard__tag-k {
+  color: var(--c-mid);
+}
+.gcard__tag-name {
+  font-size: 1rem;
+  font-weight: 900;
+  color: var(--c-ink);
+}
+.gcard__tag-note {
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: var(--c-mid);
+  opacity: 0.8;
+}
+
+/* ── 进度点 ─────────────────────────────────────────────── */
+.gal__dots {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: center;
+  gap: var(--sp-1);
+}
+.gal__dot {
+  width: 18px;
+  height: 3px;
+  background: var(--c-mid-40);
+}
+.gal__dot.is-on {
+  background: var(--c-mid);
+}
+
+/* 钉住的前提：祖先不能裁剪。
+   .act 上的 overflow:hidden 会让 sticky 相对"幕自己"而不是视口 —— 等于没钉住
+   （实测滚到中点时整块内容被顶出屏幕，只剩标签和进度点，下面一大片空白）。
+   横向溢出由 .gal__track 自己的 overflow:hidden 兜住，这里放开是安全的。 */
+#act-gallery {
+  overflow: visible;
+}

@@ -1,0 +1,31 @@
+/* 粒子层测试页：固定全屏 Canvas 在下，内容在上 */
+
+#particles {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.page {
+  position: relative;
+  z-index: 1;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: var(--sp-3) var(--sp-3) calc(var(--sp-4) * 4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.page .t-hero {
+  margin-top: var(--sp-3);
+}
+
+/* 对比度样本：故意不加遮罩，直接压在粒子最密的地方。
+   粒子层在 DOM 之下，字本身不会被盖住，要验的是"字与背景的对比还够不够"。 */
+.page p {
+  padding: var(--sp-2) 0;
+}

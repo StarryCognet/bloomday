@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>9.19 · 生日快乐</title>
+    <!--TOKENS-->
+    <link rel="stylesheet" href="/src/base.css" />
+    <link rel="stylesheet" href="/src/seal.css" />
+    <link rel="stylesheet" href="/src/acts.css" />
+    <link rel="stylesheet" href="/src/main-visual.css" />
+    <link rel="stylesheet" href="/src/blessing.css" />
+    <link rel="stylesheet" href="/src/gallery.css" />
+    <link rel="stylesheet" href="/src/finale.css" />
+    <link rel="stylesheet" href="/src/lyrics.css" />
+    <link rel="stylesheet" href="/src/chrome.css" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <!-- BGM：iOS/微信必须在用户手势里首次 play() 才能解锁 -->
+    <audio id="bgm" src="./blessing.mp3" preload="auto" loop playsinline></audio>
+    <script type="module" src="/src/app.ts"></script>
+  </body>
+</html>

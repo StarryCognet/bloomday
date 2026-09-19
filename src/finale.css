@@ -1,0 +1,168 @@
+/* 许愿收尾幕 —— 亮底，蛋糕、烛火、哥哥的签名 */
+
+.fin {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--sp-4) * 1.6);
+  padding: calc(var(--sp-4) * 2) var(--sp-3);
+}
+
+.fin__stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-3);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.fin__wish {
+  margin: 0;
+  color: var(--c-mid);
+  font-size: 0.95rem;
+  letter-spacing: 0.1em;
+}
+
+/* ── 蛋糕（亮底上用深蓝身 + 亮蓝奶油带）────────────────── */
+.fin__cake {
+  position: relative;
+  width: 190px;
+  height: 150px;
+}
+.fin__cake-body {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 84px;
+  background: var(--c-navy);
+  clip-path: polygon(0 24%, 100% 0, 100% 100%, 0 100%);
+}
+.fin__cake-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 12px;
+}
+.fin__cake-line--a {
+  bottom: 52px;
+  background: var(--c-mid-light);
+}
+.fin__cake-line--b {
+  bottom: 22px;
+  background: var(--c-cyan);
+}
+
+/* ── 蜡烛与火 ───────────────────────────────────────────── */
+.fin__candle {
+  position: absolute;
+  bottom: 84px;
+  left: 50%;
+  margin-left: -6px;
+  width: 12px;
+  height: 54px;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--c-white) 0 9px,
+    var(--c-mid) 9px 18px
+  );
+  transform: skewX(-6deg);
+}
+.fin__flame {
+  position: absolute;
+  bottom: 136px;
+  left: 50%;
+  margin-left: -8px;
+  width: 16px;
+  height: 28px;
+  background: radial-gradient(circle at 50% 72%, var(--c-white) 0 20%, var(--c-cyan) 46%, transparent 74%);
+  border-radius: 50% 50% 46% 46%;
+  transform-origin: 50% 92%;
+}
+.fin__glow {
+  position: absolute;
+  bottom: 112px;
+  left: 50%;
+  margin-left: -48px;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--c-cyan) 0 16%, transparent 66%);
+  opacity: 0.5;
+  pointer-events: none;
+}
+.fin__smoke {
+  position: absolute;
+  bottom: 146px;
+  left: 50%;
+  margin-left: -3px;
+  width: 6px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(to top, var(--c-ink), transparent);
+  filter: blur(3px);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 兜底提示：初始透明，5 秒没被碰过才浮现 */
+.fin__hint {
+  margin: 0;
+  opacity: 0;
+  color: var(--c-mid);
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+}
+
+/* ── 哥哥的信 ───────────────────────────────────────────── */
+.fin__letter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+  text-align: center;
+  max-width: 420px;
+}
+.fin__hb {
+  margin: 0;
+  color: var(--c-ink);
+  font-size: clamp(2rem, 11vw, 3rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.fin__line {
+  margin: 0;
+  color: var(--c-mid);
+  font-size: 0.95rem;
+  line-height: 1.8;
+}
+.fin__sign {
+  margin: var(--sp-2) 0 0;
+  color: var(--c-ink);
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+.fin__date {
+  margin: 0;
+  color: var(--c-mid);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  letter-spacing: 0.18em;
+  font-variant-numeric: tabular-nums;
+}
+.fin__rule {
+  display: block;
+  width: min(220px, 60vw);
+  height: 4px;
+  background-image: radial-gradient(var(--c-mid) var(--ht-dot), transparent var(--ht-dot));
+  background-size: var(--ht-size) var(--ht-size);
+  background-repeat: repeat-x;
+  opacity: 0.8;
+  transform-origin: center;
+}

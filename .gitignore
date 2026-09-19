@@ -1,0 +1,10 @@
+node_modules
+dist
+.vite
+*.local
+.npm-cache
+.chrome-*
+.edge-profile
+verify/.site.config.orig.ts
+.ref/
+verify/shots/
