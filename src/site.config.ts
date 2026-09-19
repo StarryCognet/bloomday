@@ -111,6 +111,8 @@ export const SITE = {
       label: 'ONE MORE THING',
       line: '还有个东西。点一下。',
       after: '拿好了。',
+      /** 盖住的那两张上面写的字 */
+      coverText: '等快递到了再揭晓',
       /**
        * 盒子里飞出来的四张图。
        * hidden: true 的会被盖住、不露内容，而且**没有任何解锁开关** ——

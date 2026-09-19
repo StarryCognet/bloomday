@@ -173,3 +173,116 @@
   color: var(--c-white);
   text-shadow: 2px 2px 0 var(--c-ink);
 }
+
+/* ── P3R 式边框：切角 + 粗墨边 + 顶部斜切青带 + 右上角标 ────── */
+.gift__card {
+  clip-path: var(--clip-card);
+  box-shadow: inset 0 0 0 3px var(--c-ink);
+  background: var(--c-white);
+  cursor: pointer;
+  pointer-events: auto;
+}
+.gift__card::after {
+  content: '';
+  position: absolute;
+  left: -18%;
+  right: -18%;
+  top: 0;
+  height: 13px;
+  background: var(--c-cyan);
+  transform: skewX(var(--skew-flat));
+  opacity: 0.92;
+  z-index: 3;
+  pointer-events: none;
+}
+/* 右上角标：和内层白框一起构成"界面感" */
+.gift__card::before {
+  content: '';
+  position: absolute;
+  right: 5px;
+  top: 17px;
+  width: 11px;
+  height: 11px;
+  border-right: 2px solid var(--c-white);
+  border-top: 2px solid var(--c-white);
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* 盖板上的字：竖排两行，压在蓝底上 */
+.gift__cover b {
+  font-size: 0.72rem;
+  font-weight: 900;
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+  color: var(--c-white);
+  text-shadow: 1px 1px 0 var(--c-ink);
+  padding: 0 10px;
+  text-align: center;
+}
+
+/* ── 放大查看层（挂在 body 上，能盖过顶部导航）───────────── */
+.gift__viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.gift__viewer.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.gift__viewer-scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--c-ink);
+  opacity: 0.82;
+}
+.gift__viewer-card {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  width: min(84vw, 620px);
+  max-height: 68vh;
+  overflow: hidden;
+  background: var(--c-white);
+  clip-path: var(--clip-card-lg);
+  box-shadow: inset 0 0 0 4px var(--c-ink);
+}
+.gift__viewer-card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-height: 68vh;
+  object-fit: contain;
+  background: var(--c-white);
+}
+.gift__viewer-card .gift__cover {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+.gift__viewer-card .gift__cover[hidden] {
+  display: none;
+}
+.gift__viewer-card .gift__cover b {
+  font-size: clamp(1.05rem, 4.4vw, 1.5rem);
+}
+.gift__viewer-hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 7%;
+  z-index: 2;
+  margin: 0;
+  text-align: center;
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  color: var(--c-white);
+  opacity: 0.75;
+}

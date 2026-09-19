@@ -2,8 +2,8 @@
  * 礼物盒幕 —— 全程唯一一次"她做了一件事"。
  *
  * 点盒子：盖子飞开 + 彩纸炸开 + 四张图从盒里飞出来摊成一把扇子。
- * 其中被标 hidden 的几张会盖住、不露内容，而且**没有任何解锁开关** ——
- * 留给哥哥之后自己决定怎么揭。
+ * 点某张图：弹簧按压 + 放大查看（放大层挂在 body 上，见下）。
+ * 被标 hidden 的几张全程只显示盖板、不露内容，而且**没有任何解锁开关**。
  */
 import gsap from 'gsap'
 import { SITE } from '../site.config'
@@ -26,6 +26,8 @@ interface Confetti {
 
 export function createGift(el: HTMLElement): ActDefinition {
   const cards = SITE.copy.gift.cards
+  const coverText = SITE.copy.gift.coverText
+
   const cardsHtml = cards
     .map(
       (c, i) =>
@@ -36,7 +38,7 @@ export function createGift(el: HTMLElement): ActDefinition {
         '"><img src="' +
         c.src +
         '" alt="" loading="lazy" decoding="async" />' +
-        (c.hidden ? '<span class="gift__cover" aria-hidden="true"><b>?</b></span>' : '') +
+        (c.hidden ? '<span class="gift__cover"><b>' + coverText + '</b></span>' : '') +
         '</figure>',
     )
     .join('')
@@ -61,12 +63,35 @@ export function createGift(el: HTMLElement): ActDefinition {
     '</p>' +
     '</div>'
 
+  /**
+   * 放大层挂在 body 上，不放幕里。
+   * 原因：.act 有 z-index:2，会形成层叠上下文 —— 固定在幕里的元素哪怕
+   * z-index 写 999 也逃不出这一层，会被顶部导航（z-index:40）压住。
+   */
+  const viewer = document.createElement('div')
+  viewer.className = 'gift__viewer'
+  viewer.id = 'gift-viewer'
+  viewer.setAttribute('aria-hidden', 'true')
+  viewer.innerHTML =
+    '<span class="gift__viewer-scrim"></span>' +
+    '<figure class="gift__viewer-card" id="gift-viewer-card">' +
+    '<img id="gift-viewer-img" alt="" />' +
+    '<span class="gift__cover" id="gift-viewer-cover"><b>' +
+    coverText +
+    '</b></span>' +
+    '</figure>' +
+    '<p class="gift__viewer-hint">点一下关掉</p>'
+  document.body.appendChild(viewer)
+
   const canvas = el.querySelector<HTMLCanvasElement>('#gift-cv')!
   const boxEl = el.querySelector<HTMLElement>('#gift-box')!
   const lidEl = el.querySelector<HTMLElement>('.gift__lid')!
   const lineEl = el.querySelector<HTMLElement>('#gift-line')!
   const afterEl = el.querySelector<HTMLElement>('#gift-after')!
   const cardEls = Array.from(el.querySelectorAll<HTMLElement>('.gift__card'))
+  const vCard = viewer.querySelector<HTMLElement>('#gift-viewer-card')!
+  const vImg = viewer.querySelector<HTMLImageElement>('#gift-viewer-img')!
+  const vCover = viewer.querySelector<HTMLElement>('#gift-viewer-cover')!
   const ctxMaybe = canvas.getContext('2d')
 
   const palette = canvasPalette()
@@ -77,6 +102,7 @@ export function createGift(el: HTMLElement): ActDefinition {
   let cssH = 0
   let last = 0
   let opened = 0
+  let openedViewer = -1
   let active = false
 
   function resize(): void {
@@ -188,6 +214,56 @@ export function createGift(el: HTMLElement): ActDefinition {
     )
   }
 
+  /** 点某张图：弹簧按压 + 放大查看 */
+  function openViewer(i: number): void {
+    const c = cards[i]
+    const card = cardEls[i]
+    if (!c || !card) return
+    openedViewer = i
+
+    // 被盖住的：放大层里也只显示盖板，图片根本不加载 —— 从根上不露内容
+    if (c.hidden) {
+      vImg.removeAttribute('src')
+      vCover.hidden = false
+    } else {
+      vImg.src = c.src
+      vCover.hidden = true
+    }
+
+    viewer.classList.add('is-open')
+    viewer.setAttribute('aria-hidden', 'false')
+
+    if (skipMotion()) {
+      gsap.set(vCard, { opacity: 1, scale: 1, rotate: 0 })
+      return
+    }
+    // 按下的那一下：先缩，再弹回来
+    gsap.fromTo(card, { scale: 0.88 }, { scale: 1, duration: 0.8, ease: EASE.spring })
+    gsap.fromTo(
+      vCard,
+      { opacity: 0, scale: 0.45, rotate: -8 },
+      { opacity: 1, scale: 1, rotate: 0, duration: 0.9, ease: EASE.spring },
+    )
+  }
+
+  function closeViewer(): void {
+    if (openedViewer < 0) return
+    openedViewer = -1
+    viewer.classList.remove('is-open')
+    viewer.setAttribute('aria-hidden', 'true')
+    if (skipMotion()) return
+    gsap.to(vCard, { opacity: 0, scale: 0.7, duration: 0.24, ease: EASE.sink })
+  }
+
+  viewer.addEventListener('click', closeViewer)
+  cardEls.forEach((card, i) => {
+    card.style.pointerEvents = 'auto'
+    card.addEventListener('click', (ev) => {
+      ev.stopPropagation()
+      openViewer(i)
+    })
+  })
+
   boxEl.addEventListener('click', open)
 
   function setState(_node: HTMLElement, state: ActState): void {
@@ -195,6 +271,8 @@ export function createGift(el: HTMLElement): ActDefinition {
     if (state === 'past') gsap.set(el, { opacity: 0.25 })
     else if (state === 'future') gsap.set(el, { opacity: 0 })
     else gsap.set(el, { opacity: 1, clearProps: 'opacity' })
+    // 幕滚出去了就把放大层收掉，免得它孤零零留在屏幕上
+    if (!active) closeViewer()
   }
 
   function enter(): gsap.core.Timeline | void {
@@ -226,9 +304,11 @@ export function createGift(el: HTMLElement): ActDefinition {
     active,
     cards: cardEls.length,
     covered: el.querySelectorAll('.gift__card.is-covered').length,
+    viewer: openedViewer,
+    viewerImg: vImg.getAttribute('src') ?? '(未加载)',
     summary:
       `礼物盒 · 打开 ${opened} 次 · 彩纸 ${bits.length} 片 · 飞出 ${cardEls.length} 张` +
-      `（盖住 ${el.querySelectorAll('.gift__card.is-covered').length} 张）· 当前幕=${active}`,
+      `（盖住 ${el.querySelectorAll('.gift__card.is-covered').length} 张）· 放大中=${openedViewer} · 当前幕=${active}`,
   })
 
   return { id: 'gift', el, setState, enter }

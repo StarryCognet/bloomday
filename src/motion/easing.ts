@@ -33,6 +33,8 @@ export const EASE = {
   sink: 'power2.in',
   /** 弹起：轻过冲 */
   pop: 'back.out(1.7)',
+  /** 弹簧：真正的往复回弹 —— 点击放大、卡片按压回弹 */
+  spring: 'elastic.out(1, 0.45)',
   /** 急停：开头极快，立即咬住 */
   snap: 'expo.out',
   linear: 'none',

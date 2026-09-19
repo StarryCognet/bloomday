@@ -183,7 +183,7 @@ if (opt.scrollBefore) {
 if (opt.scrollToSel) {
   await send('Runtime.evaluate', {
     awaitPromise: true,
-    expression: `new Promise(function(res){var el=document.querySelector(${JSON.stringify(opt.scrollToSel)});if(!el)return res('NOT_FOUND');var r=el.getBoundingClientRect();var target=r.top+window.scrollY-(window.innerHeight-r.height)/2;var n=0;var id=setInterval(function(){var d=target-window.scrollY;if(Math.abs(d)<40||n++>60){clearInterval(id);setTimeout(function(){res(Math.round(window.scrollY))},700);return}window.dispatchEvent(new WheelEvent('wheel',{deltaY:Math.max(-900,Math.min(900,d)),bubbles:true,cancelable:true}))},70)})`,
+    expression: `new Promise(function(res){var el=document.querySelector(${JSON.stringify(opt.scrollToSel)});if(!el)return res('NOT_FOUND');function want(){var r=el.getBoundingClientRect();return r.top+window.scrollY-(window.innerHeight-r.height)/2}var passes=0;function pass(){var d=want()-window.scrollY;if(Math.abs(d)<30||passes++>14)return res(Math.round(window.scrollY));window.dispatchEvent(new WheelEvent('wheel',{deltaY:Math.max(-900,Math.min(900,d)),bubbles:true,cancelable:true}));setTimeout(pass,420)}pass()})`,
   })
 }
 
@@ -192,6 +192,21 @@ if (opt.scrollToSel) {
 if (opt.tapSel) {
   await clickAt(opt.tapSel)
   await sleep(Number(opt.tapWait ?? 1100))
+}
+
+/** --tapSel2=<选择器> ：再点一下（比如"点开盒子之后再点某张图"） */
+if (opt.tapSel2) {
+  await clickAt(opt.tapSel2)
+  await sleep(Number(opt.tapWait2 ?? 1200))
+}
+
+/** --jsTap=<选择器> ：按 JS 直接 .click()，不走坐标。
+    卡片是旋转的，getBoundingClientRect 给的是外接矩形，中心点会打偏。 */
+if (opt.jsTap) {
+  await send('Runtime.evaluate', {
+    expression: `(function(){var e=document.querySelector(${JSON.stringify(opt.jsTap)});if(!e)return 'NOT_FOUND';e.click();return 'ok'})()`,
+  })
+  await sleep(Number(opt.jsTapWait ?? 1200))
 }
 
 if (burst) {
