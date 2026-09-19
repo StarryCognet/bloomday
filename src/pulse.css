@@ -56,7 +56,8 @@
 }
 .gift__label {
   position: relative;
-  z-index: 2;
+  z-index: 5;
+  margin-bottom: var(--sp-2);
   color: var(--c-mid);
 }
 
@@ -114,13 +115,10 @@
   color: var(--c-ink);
 }
 .gift__after {
-  position: absolute;
-  left: 0;
-  right: 0;
-  /* 16% 会被底部常驻的歌词层盖住（它占最下 190px），抬到 32% */
-  bottom: 32%;
+  /* 放进流里、排在盒子后面：absolute + bottom 会压在盒子上（实测遮住盒子） */
+  position: relative;
   z-index: 2;
-  margin: 0;
+  margin: var(--sp-2) 0 0;
   text-align: center;
   opacity: 0;
   color: var(--c-mid);
@@ -211,14 +209,19 @@
 
 /* 盖板上的字：竖排两行，压在蓝底上 */
 .gift__cover b {
-  font-size: 0.72rem;
+  /* 得能塞进 118px 宽的卡里：字号 + 内边距 + 断行一起约束，
+     否则第一行比卡还宽（实测被切） */
+  display: block;
+  max-width: 100%;
+  padding: 0 6px;
+  font-size: 0.66rem;
   font-weight: 900;
-  line-height: 1.6;
-  letter-spacing: 0.04em;
+  line-height: 1.65;
+  letter-spacing: 0.02em;
   color: var(--c-white);
   text-shadow: 1px 1px 0 var(--c-ink);
-  padding: 0 10px;
   text-align: center;
+  overflow-wrap: anywhere;
 }
 
 /* ── 放大查看层（挂在 body 上，能盖过顶部导航）───────────── */

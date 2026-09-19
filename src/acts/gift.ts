@@ -193,7 +193,7 @@ export function createGift(el: HTMLElement): ActDefinition {
     opened++
     burst()
     if (skipMotion()) {
-      gsap.set(lidEl, { y: -180, rotate: -26 })
+      gsap.set(lidEl, { y: -78, rotate: -22, opacity: 0 })
       gsap.set(lineEl, { opacity: 0 })
       gsap.set(afterEl, { opacity: 1 })
       const span = cardEls.length - 1
@@ -204,7 +204,9 @@ export function createGift(el: HTMLElement): ActDefinition {
       return
     }
     fanOut()
-    gsap.to(lidEl, { y: -180, rotate: -26, duration: 0.7, ease: EASE.pop })
+    // 盖子飞太远会落到卡片后面，看着像盒子塌了 —— 飞一小段就淡出，
+    // 读起来是『盖子飞走了』而不是『盒子坏了』
+    gsap.to(lidEl, { y: -78, rotate: -22, opacity: 0, duration: 0.62, ease: EASE.pop })
     gsap.to(boxEl, { scale: 1.04, duration: 0.18, yoyo: true, repeat: 1, ease: EASE.drift })
     gsap.to(lineEl, { opacity: 0, y: -10, duration: 0.35, ease: EASE.sink })
     gsap.fromTo(

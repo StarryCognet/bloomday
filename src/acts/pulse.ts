@@ -18,6 +18,18 @@ interface Ring {
   alpha: number
 }
 
+/** 点出来的火花：有重力、会衰减 */
+interface Spark {
+  x: number
+  y: number
+  vx: number
+  vy: number
+  r: number
+  life: number
+  max: number
+  color: string
+}
+
 export function createPulse(el: HTMLElement, getAnalyser: () => AnalyserNode | null): ActDefinition {
   el.innerHTML = `
     <div class="pulse">
@@ -41,6 +53,7 @@ export function createPulse(el: HTMLElement, getAnalyser: () => AnalyserNode | n
 
   const BARS = 64
   const rings: Ring[] = []
+  const sparks: Spark[] = []
   const freq = { data: null as Uint8Array | null, bass: 0, mid: 0, level: 0 }
   let cssW = 0
   let cssH = 0
@@ -92,6 +105,34 @@ export function createPulse(el: HTMLElement, getAnalyser: () => AnalyserNode | n
     freq.bass += (b - freq.bass) * k
     freq.mid += (m - freq.mid) * k
     freq.level = Math.max(freq.bass, freq.mid * 0.85)
+  }
+
+  /** 点哪里炸哪里：一圈火花 + 立刻扩开的涟漪 */
+  function spawn(cx: number, cy: number, n: number): void {
+    if (skipMotion()) return
+    const colors = [palette.cyan, palette.mid, palette.white]
+    for (let i = 0; i < n; i++) {
+      const ang = Math.random() * Math.PI * 2
+      const speed = 90 + Math.random() * 430
+      const life = 0.7 + Math.random() * 0.9
+      sparks.push({
+        x: cx,
+        y: cy,
+        vx: Math.cos(ang) * speed,
+        vy: Math.sin(ang) * speed,
+        r: 1.6 + Math.random() * 3.4,
+        life,
+        max: life,
+        color: colors[i % colors.length] ?? palette.cyan,
+      })
+    }
+    rings.push({ r: 6, alpha: 0.85 })
+  }
+
+  function onPointer(ev: PointerEvent): void {
+    if (!active) return
+    const r = canvas.getBoundingClientRect()
+    spawn(ev.clientX - r.left, ev.clientY - r.top, 44)
   }
 
   function frame(now: number): void {
@@ -155,6 +196,25 @@ export function createPulse(el: HTMLElement, getAnalyser: () => AnalyserNode | n
       }
     }
 
+    // 火花：点出来的粒子，带重力和衰减
+    for (let i = sparks.length - 1; i >= 0; i--) {
+      const s = sparks[i]!
+      s.life -= dt
+      if (s.life <= 0) {
+        sparks.splice(i, 1)
+        continue
+      }
+      s.vy += 420 * dt
+      s.vx *= 1 - 1.1 * dt
+      s.x += s.vx * dt
+      s.y += s.vy * dt
+      const a = s.life / s.max
+      ctx.fillStyle = withAlpha(s.color, 0.25 + a * 0.7)
+      ctx.beginPath()
+      ctx.arc(s.x, s.y, s.r * (0.4 + a * 0.9), 0, Math.PI * 2)
+      ctx.fill()
+    }
+
     // 核心：低频越大越亮越大
     const grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, pulse * 1.5)
     grd.addColorStop(0, withAlpha(palette.white, 0.85))
@@ -186,6 +246,9 @@ export function createPulse(el: HTMLElement, getAnalyser: () => AnalyserNode | n
     )
   }
 
+  // 点哪里炸哪里：这一幕是全程唯一可以戳的地方
+  canvas.addEventListener('pointerdown', onPointer)
+
   resize()
   window.addEventListener('resize', resize)
   if (allowResident()) requestAnimationFrame(frame)
@@ -208,6 +271,7 @@ export function createPulse(el: HTMLElement, getAnalyser: () => AnalyserNode | n
     mid: Number(freq.mid.toFixed(3)),
     analyser: getAnalyser() !== null,
     rings: rings.length,
+    sparks: sparks.length,
     summary: `能量 ${freq.level.toFixed(3)}（低 ${freq.bass.toFixed(3)} / 中 ${freq.mid.toFixed(3)}）· 分析节点=${
       getAnalyser() !== null
     } · 涟漪 ${rings.length}`,
