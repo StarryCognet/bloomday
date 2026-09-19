@@ -52,8 +52,9 @@ const MOTIONS: Array<Omit<BlockSpec, 'lines'>> = [
 /** 段数由文案决定：哥哥加段/删段都不会让动效错位（按段序取模循环） */
 /** 指定某几段换一种呈现方式（0 起）。改这里就能换段落。 */
 const STYLE_OVERRIDE: Record<number, Motion> = {
-  2: 'lyric', // 「歌里唱『好好吃…』」—— 这句本来就是歌，做成歌词卡
-  3: 'type', // 「以后的事我也想了」—— 情绪最重的一段，打字机更有停顿感
+  // 只剩歌词卡这一条：原来绑在 3 上的打字机那段已被删掉。
+  // 删段会让后面的序号前移，所以绑定必须跟着改 —— 不然下一段会被误当成打字机。
+  2: 'lyric', // 「好好吃，好好睡，好好玩，好好学」—— 本来就是歌里那句
 }
 
 const BLOCKS: BlockSpec[] = SITE.copy.blessing.blocks.map((lines, i) => ({
