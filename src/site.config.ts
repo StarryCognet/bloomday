@@ -104,7 +104,7 @@ export const SITE = {
     gallery: {
       eyebrow: 'HER FAVORITES',
       lead: '收集了一些结城理的优质图片，高清图找你哥要。',
-      hint: '接着往下滑',
+      hint: '接着往下滑 · 图源 Pixiv，版权归原作者',
     },
 
     /** 第五幕 · 许愿收尾 */

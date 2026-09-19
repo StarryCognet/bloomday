@@ -22,6 +22,7 @@ import { createSmooth } from './smooth'
 import { createChrome } from './chrome'
 import { createScrollReveal } from './acts/scroll-reveal'
 import { createGalleryPin } from './acts/gallery-pin'
+import { createRibbons } from './ribbons'
 import { createCaustics } from './acts/caustics'
 
 /** 动效强度由站点入口注入内核 —— 内核不认识 site.config，方向上不能反过来 */
@@ -126,6 +127,36 @@ chrome.setActive(-1) // 开屏阶段整条熄灭
 const pick = (sel: string, root: HTMLElement): HTMLElement => root.querySelector<HTMLElement>(sel)!
 /** 画廊钉住：滚到这一幕就停住，继续往下滚 = 图片横向走，走完才放行 */
 const galleryPin = createGalleryPin(document.getElementById('act-gallery')!, document.getElementById('gal-track')!)
+
+/** 粒子飘带：能量来自 BGM 的实时频谱 */
+let analyserNode: AnalyserNode | null = null
+const ribbons = createRibbons(() => analyserNode)
+
+/**
+ * 在用户手势里挂分析节点。
+ * 两个必须记住的点：
+ *  1. AudioContext 必须在手势里创建，否则一直是 suspended；
+ *  2. createMediaElementSource 之后，元素的输出**只走这张图** ——
+ *     不把 analyser 接回 destination 就没声音了。
+ * 失败就退化成固定能量，音乐不受影响（元素没被动过）。
+ */
+function attachAnalyser(): void {
+  const el = document.querySelector<HTMLAudioElement>('#bgm')
+  if (!el || analyserNode) return
+  try {
+    const actx = new AudioContext()
+    const src = actx.createMediaElementSource(el)
+    const an = actx.createAnalyser()
+    an.fftSize = 256
+    an.smoothingTimeConstant = 0.82
+    src.connect(an)
+    an.connect(actx.destination)
+    void actx.resume()
+    analyserNode = an
+  } catch {
+    analyserNode = null
+  }
+}
 
 const reveals = [
   createScrollReveal(document.getElementById('act-mv')!, [
@@ -268,6 +299,7 @@ function enter(): void {
   cta.disabled = true
 
   // 同步发起播放（不要先 await 别的），再处理失败
+  attachAnalyser()
   if (audio) {
     audio.volume = 1
     const p = audio.play()
@@ -381,6 +413,7 @@ function siteReport(): unknown {
     },
     activeDomTweens: countActiveDomTweens(),
     lyrics: lyrics.report(),
+    ribbons: ribbons.report(),
     peakDomTweens,
     peakMovingTweens,
   }

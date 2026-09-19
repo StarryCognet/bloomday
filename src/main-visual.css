@@ -5,7 +5,9 @@
   inset: 0;
   display: grid;
   place-items: center;
-  background: var(--c-white);
+  /* 不能给底色：这一层在飘带画布之上，铺白就把飘带全盖住了。
+     底色统一由 body 提供。 */
+  background: transparent;
   overflow: hidden;
 }
 
