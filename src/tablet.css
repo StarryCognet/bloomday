@@ -1,0 +1,105 @@
+/* 平板布局覆盖（>=640px）。
+   字号已经在 token 层抬过封顶了，这里只处理"跟尺寸无关、但跟屏幕宽有关"的东西：
+   内容最大宽度、卡片密度、歌词尺寸、封印的入口尺寸。 */
+
+@media (min-width: 640px) {
+  /* ── 内容栏：手机是 560，平板上放宽，否则字大了却仍挤在中间一条 ── */
+  .bs {
+    max-width: 680px;
+    padding-left: var(--sp-4);
+    padding-right: var(--sp-4);
+  }
+
+  /* ── 主视觉：数字那一列放宽 ─────────────────────────── */
+  .mv__grid {
+    max-width: 660px;
+  }
+
+  /* ── 角色幕：卡片窄一些，一屏能看见两张半 ───────────── */
+  .gcard {
+    flex: 0 0 44%;
+  }
+  .gcard__tag-name {
+    font-size: 1.15rem;
+  }
+  .gcard__tag-note {
+    font-size: 0.9rem;
+  }
+
+  /* ── 歌词层：尺寸和高度都要跟着长 ───────────────────── */
+  .lyr {
+    height: 300px;
+    padding-left: var(--sp-4);
+    padding-right: var(--sp-4);
+  }
+  .lyr__scrim {
+    height: 330px;
+  }
+  .lyr__edge {
+    bottom: 270px;
+  }
+  .lyr__jp {
+    font-size: clamp(1.35rem, 2.7vw, 2rem);
+  }
+  .lyr__cn {
+    font-size: clamp(0.95rem, 1.7vw, 1.2rem);
+  }
+
+  /* ── 封印：logo 式日期和入口都要放大，否则在大屏上显得空 ── */
+  .seal__mark-num {
+    font-size: clamp(5rem, 11vw, 9rem);
+  }
+  .seal__logo-sub {
+    font-size: clamp(1rem, 2vw, 1.35rem);
+  }
+  .seal__logo-tiny {
+    font-size: clamp(0.72rem, 1.3vw, 0.9rem);
+  }
+  .seal__greeting {
+    font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+  }
+  .seal__cta {
+    font-size: clamp(1.05rem, 2vw, 1.3rem);
+    padding: 18px 34px 18px 28px;
+  }
+  .seal__brand {
+    font-size: clamp(1.05rem, 2vw, 1.4rem);
+  }
+  .seal__sale,
+  .seal__nav {
+    font-size: clamp(0.8rem, 1.5vw, 1rem);
+  }
+  .seal__tap {
+    font-size: 0.9rem;
+  }
+
+  /* ── 许愿幕：蛋糕按比例放大 ─────────────────────────── */
+  .fin__cake {
+    width: 250px;
+    height: 198px;
+  }
+  .fin__cake-body {
+    height: 111px;
+  }
+  .fin__cake-line--a {
+    bottom: 69px;
+  }
+  .fin__cake-line--b {
+    bottom: 29px;
+  }
+  .fin__candle {
+    bottom: 111px;
+  }
+  .fin__flame {
+    bottom: 180px;
+  }
+  .fin__glow {
+    bottom: 148px;
+  }
+  .fin__smoke {
+    bottom: 193px;
+  }
+  .fin__letter {
+    max-width: 560px;
+  }
+}

@@ -70,6 +70,15 @@ export const typography = {
   label: { size: 'clamp(0.6875rem, 3vw, 0.8125rem)', weight: 700, tracking: '0.18em', leading: 1.2 },
 } as const
 
+/** 平板及以上（>=640px）：同样的层级，但把封顶抬高 —— 大屏不该还是手机字号 */
+export const tabletTypography: Record<keyof typeof typography, string> = {
+  hero: 'clamp(5.5rem, 17vw, 13rem)',
+  h1: 'clamp(2.4rem, 6vw, 4.5rem)',
+  h2: 'clamp(1.6rem, 3.4vw, 2.4rem)',
+  body: 'clamp(1.15rem, 2.2vw, 1.5rem)',
+  label: 'clamp(0.8rem, 1.3vw, 1rem)',
+}
+
 export type TypeLevel = keyof typeof typography
 
 /* ── 间距（最小集，防止后续硬编） ────────────────────────── */
@@ -152,12 +161,21 @@ for (const [level, t] of Object.entries(typography)) {
   cvars[`--lh-${level}`] = `${t.leading}`
 }
 
-/** 生成注入 index.html 的 :root 样式块 */
+/** 生成注入 index.html 的 :root 样式块（含平板断点） */
 export function tokenCss(): string {
   const body = Object.entries(cvars)
     .map(([k, v]) => `  ${k}: ${v};`)
     .join('\n')
-  return `:root {\n${body}\n}`
+  const tablet = Object.entries(tabletTypography)
+    .map(([level, size]) => `  --fs-${level}: ${size};`)
+    .join('\n')
+  return [
+    `:root {\n${body}\n}`,
+    `/* 平板及以上：只覆盖字号，字重/字距/行高沿用手机那套 */\n@media (min-width: 640px) {\n  :root {\n${tablet
+      .split('\n')
+      .map((l) => '  ' + l)
+      .join('\n')}\n  }\n}`,
+  ].join('\n')
 }
 
 /* ── Canvas 出口：和 DOM 取的是同一批常量 ────────────────── */
