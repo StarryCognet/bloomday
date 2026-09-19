@@ -313,6 +313,10 @@ function enter(): void {
     if (label) label.textContent = '进入'
     const hint = document.querySelector<HTMLElement>('.seal__scroll')
     if (hint) hint.textContent = '开场曲放完，或再点一次'
+    // 兜底：点了第一次却不点第二次 = 卡在封印上。给个自动进站，别让她出不去。
+    window.setTimeout(() => {
+      if (!started) enter()
+    }, 12000)
     return
   }
 

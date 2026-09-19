@@ -159,6 +159,16 @@ if (!clickSel && !clickSelAfter && click) {
   await send('Input.dispatchMouseEvent', { type: 'mouseReleased', ...common })
 }
 
+/** --scrollBefore=<y> ：点击序列之后、截图之前滚一次。
+    为什么需要它：封印期间 html.is-sealed 把 overflow 锁住了，滚动无效 ——
+    想在进站后看到下面的幕，必须"先点完再滚"，而这个顺序原来的工具做不到。 */
+if (opt.scrollBefore) {
+  await send('Runtime.evaluate', {
+    expression: `(window.__scrollTo || function(y){window.scrollTo(0,y)}).call(window, ${Number(opt.scrollBefore)})`,
+  })
+  await sleep(1300)
+}
+
 if (burst) {
   const t0 = Date.now()
   for (const offset of burst) {
