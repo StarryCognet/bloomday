@@ -252,6 +252,10 @@ function playBreak(): Promise<void> {
     tl.to('.seal__art', { yPercent: -12, duration: 0.42, ease: EASE.sink }, 0.06)
     tl.to(sealEl, { yPercent: -100, duration: 0.4, ease: EASE.tear }, 0.12)
     tl.set(sealEl, { display: 'none' }, 0.54)
+    // 序章是一次性的：让开之后把 iframe 从 DOM 摘掉。
+    // 摘掉会销毁它的浏览上下文，连带停掉 60Hz 的曲线求值 rAF、音频和
+    // 4MB 解码后的贴图。不摘的话她在后面几幕里，序章还在后台空转烧电。
+    tl.call(() => document.getElementById('ark-frame')?.remove(), undefined, 0.56)
     // 主视觉 0.15s 就起手（它的文字在进场前是藏着的），这样封印一让开就已经在砸字，
     // 不会出现"屏幕上什么都没有"的空档。
     tl.call(() => mainVisual.enter?.(nextEl), undefined, 0.15)
