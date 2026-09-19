@@ -35,7 +35,10 @@ export function createChrome(sections: ChromeSection[]): ChromeHandle {
   document.body.appendChild(root)
 
   const items = Array.from(root.querySelectorAll<HTMLElement>('.chrome__nav span'))
-  let active = -1
+  // 初值不能跟 setActive(-1) 相同：setActive 开头有 index === active 的早退，
+  // 写成 -1 的话开屏那次调用直接返回，is-idle 永远加不上 —— 开屏时外框不隐藏，
+  // 会和封印自己的品牌字叠在一起（实测 .chrome__brand 透明度 0.75）。
+  let active = Number.NaN
 
   return {
     setActive(index) {

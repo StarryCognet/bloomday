@@ -47,6 +47,11 @@ if (!app) throw new Error('#app 不存在')
 
 app.innerHTML = `
   <main class="seal" id="seal">
+    <!-- 序章：明日方舟 × P3R 联动「月行水上」开屏（public/ark，已关掉 90° 旋转） -->
+    <div class="seal__ark">
+      <iframe id="ark-frame" src="./ark/index.html" title="开场动画" scrolling="no"></iframe>
+    </div>
+    <span class="seal__veil"></span>
     <div class="seal__art" id="seal-art">
       <canvas class="seal__caustics" id="seal-caustics"></canvas>
       <span class="seal__halftone"></span>

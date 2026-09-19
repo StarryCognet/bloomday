@@ -278,3 +278,66 @@
   color: var(--c-ink);
   opacity: 0.5;
 }
+
+/* ── 序章层（明日方舟 × P3R 联动开屏）──────────────────────
+   封印整体转暗：序章是全屏深蓝主视觉，原来那套"白底亮蓝"会打架。
+   P3R 的外框（四角 / 品牌 / 导航）与入口压在其上，用白字。 */
+.seal__ark {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: var(--c-ink);
+}
+.seal__ark iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+/* 上下压一层渐变：保证左上品牌、顶部导航、底部入口都读得清 */
+.seal__veil {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(to bottom, var(--c-ink-80) 0%, transparent 26%),
+    linear-gradient(to top, var(--c-ink) 0%, var(--c-ink-80) 22%, transparent 52%);
+}
+
+/* 序章当底之后，原来那块白底蓝块和它的斜切亮带都不需要了 */
+.seal__art {
+  display: none;
+}
+
+/* 压在主视觉上的字一律改白 */
+.seal {
+  background: var(--c-ink);
+}
+.seal__brand,
+.seal__nav,
+.seal__scroll,
+.seal__greeting,
+.seal__corner--tl,
+.seal__corner--tr,
+.seal__corner--bl,
+.seal__corner--br {
+  color: var(--c-white);
+}
+.seal__corner--tl,
+.seal__corner--tr,
+.seal__corner--bl,
+.seal__corner--br {
+  border-color: var(--c-white);
+}
+.seal__sale {
+  color: var(--c-cyan);
+}
+.seal__logo-sub,
+.seal__logo-tiny {
+  color: var(--c-white);
+}
+.seal__greeting {
+  text-shadow: 0 2px 14px var(--c-ink);
+}
