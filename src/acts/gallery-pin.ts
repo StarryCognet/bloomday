@@ -51,6 +51,32 @@ export function createGalleryPin(actEl: HTMLElement, track: HTMLElement): Galler
     track.scrollLeft = p * max
   }
 
+  /**
+   * 用户直接横向滑之后，把竖向位置回写 —— 否则两边脱节：
+   * 轨道停在别处，而页面位置还指着原来那张。
+   * 判据是"轨道的 scrollLeft 和竖向进度应有的值不等"，相等就说明是我自己写的。
+   */
+  function pullBack(): void {
+    if (max <= 0) return
+    const expected = progress() * max
+    if (Math.abs(track.scrollLeft - expected) < 2) return
+    const p = clamp01(track.scrollLeft / max)
+    const span = actEl.offsetHeight - window.innerHeight
+    if (span > 0) window.scrollTo(0, actEl.offsetTop + p * span)
+    lastP = -1
+  }
+  track.addEventListener('scroll', pullBack, { passive: true })
+
+  // 触控板的横向滚动：Lenis 只管竖向，这里自己接
+  track.addEventListener(
+    'wheel',
+    (ev) => {
+      if (Math.abs(ev.deltaX) <= Math.abs(ev.deltaY)) return
+      track.scrollLeft += ev.deltaX
+    },
+    { passive: true },
+  )
+
   let raf = 0
   const loop = (): void => {
     sync()
