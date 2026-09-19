@@ -1,8 +1,9 @@
 /**
  * 礼物盒幕 —— 全程唯一一次"她做了一件事"。
  *
- * 为什么要有它：从开屏到图片，她一直只能滚，全程被动。这一幕给她一个
- * 明确的动作（点盒子），点了有即时反馈（盖子飞开 + 彩纸炸开 + 换一句话）。
+ * 点盒子：盖子飞开 + 彩纸炸开 + 四张图从盒里飞出来摊成一把扇子。
+ * 其中被标 hidden 的几张会盖住、不露内容，而且**没有任何解锁开关** ——
+ * 留给哥哥之后自己决定怎么揭。
  */
 import gsap from 'gsap'
 import { SITE } from '../site.config'
@@ -24,25 +25,48 @@ interface Confetti {
 }
 
 export function createGift(el: HTMLElement): ActDefinition {
-  el.innerHTML = `
-    <div class="gift">
-      <canvas class="gift__cv" id="gift-cv"></canvas>
-      <p class="gift__label t-label">${SITE.copy.gift.label}</p>
-      <button class="gift__box" id="gift-box" type="button" aria-label="打开礼物">
-        <span class="gift__lid"></span>
-        <span class="gift__body"></span>
-        <span class="gift__ribbon"></span>
-      </button>
-      <p class="gift__line t-body" id="gift-line">${SITE.copy.gift.line}</p>
-      <p class="gift__after t-h2" id="gift-after">${SITE.copy.gift.after}</p>
-    </div>
-  `
+  const cards = SITE.copy.gift.cards
+  const cardsHtml = cards
+    .map(
+      (c, i) =>
+        '<figure class="gift__card' +
+        (c.hidden ? ' is-covered' : '') +
+        '" data-i="' +
+        i +
+        '"><img src="' +
+        c.src +
+        '" alt="" loading="lazy" decoding="async" />' +
+        (c.hidden ? '<span class="gift__cover" aria-hidden="true"><b>?</b></span>' : '') +
+        '</figure>',
+    )
+    .join('')
+
+  el.innerHTML =
+    '<div class="gift">' +
+    '<canvas class="gift__cv" id="gift-cv"></canvas>' +
+    '<p class="gift__label t-label">' +
+    SITE.copy.gift.label +
+    '</p>' +
+    '<div class="gift__cards" id="gift-cards">' +
+    cardsHtml +
+    '</div>' +
+    '<button class="gift__box" id="gift-box" type="button" aria-label="打开礼物">' +
+    '<span class="gift__lid"></span><span class="gift__body"></span><span class="gift__ribbon"></span>' +
+    '</button>' +
+    '<p class="gift__line t-body" id="gift-line">' +
+    SITE.copy.gift.line +
+    '</p>' +
+    '<p class="gift__after t-h2" id="gift-after">' +
+    SITE.copy.gift.after +
+    '</p>' +
+    '</div>'
 
   const canvas = el.querySelector<HTMLCanvasElement>('#gift-cv')!
   const boxEl = el.querySelector<HTMLElement>('#gift-box')!
   const lidEl = el.querySelector<HTMLElement>('.gift__lid')!
   const lineEl = el.querySelector<HTMLElement>('#gift-line')!
   const afterEl = el.querySelector<HTMLElement>('#gift-after')!
+  const cardEls = Array.from(el.querySelectorAll<HTMLElement>('.gift__card'))
   const ctxMaybe = canvas.getContext('2d')
 
   const palette = canvasPalette()
@@ -61,13 +85,12 @@ export function createGift(el: HTMLElement): ActDefinition {
     cssH = canvas.clientHeight || window.innerHeight
     canvas.width = Math.round(cssW * dpr)
     canvas.height = Math.round(cssH * dpr)
-    const c = ctxMaybe
-    if (c) c.setTransform(dpr, 0, 0, dpr, 0, 0)
+    if (ctxMaybe) ctxMaybe.setTransform(dpr, 0, 0, dpr, 0, 0)
   }
 
   function burst(): void {
     const cx = cssW / 2
-    const cy = cssH * 0.5
+    const cy = cssH * 0.52
     const n = skipMotion() ? 0 : 120
     for (let i = 0; i < n; i++) {
       const ang = Math.random() * Math.PI * 2
@@ -116,23 +139,52 @@ export function createGift(el: HTMLElement): ActDefinition {
     }
   }
 
+  /** 四张图摊成一把扇子：中间的最高，两边依次向外向下 */
+  function fanOut(): void {
+    const span = cardEls.length - 1
+    cardEls.forEach((card, i) => {
+      const off = i - span / 2
+      gsap.fromTo(
+        card,
+        { opacity: 0, scale: 0.3, x: 0, y: 126, rotate: 0 },
+        {
+          opacity: 1,
+          scale: 1,
+          x: off * 74,
+          y: -Math.abs(off) * 10,
+          rotate: off * 11,
+          duration: 0.72,
+          delay: 0.1 + i * 0.075,
+          ease: EASE.pop,
+          transformOrigin: '50% 100%',
+        },
+      )
+    })
+  }
+
   function open(): void {
     if (!active) return
     opened++
     burst()
     if (skipMotion()) {
-      gsap.set(lidEl, { y: -160, rotate: -24 })
+      gsap.set(lidEl, { y: -180, rotate: -26 })
       gsap.set(lineEl, { opacity: 0 })
       gsap.set(afterEl, { opacity: 1 })
+      const span = cardEls.length - 1
+      cardEls.forEach((card, i) => {
+        const off = i - span / 2
+        gsap.set(card, { opacity: 1, x: off * 74, y: -Math.abs(off) * 10, rotate: off * 11 })
+      })
       return
     }
+    fanOut()
     gsap.to(lidEl, { y: -180, rotate: -26, duration: 0.7, ease: EASE.pop })
     gsap.to(boxEl, { scale: 1.04, duration: 0.18, yoyo: true, repeat: 1, ease: EASE.drift })
     gsap.to(lineEl, { opacity: 0, y: -10, duration: 0.35, ease: EASE.sink })
     gsap.fromTo(
       afterEl,
       { opacity: 0, y: 16 },
-      { opacity: 1, y: 0, duration: 0.55, delay: 0.28, ease: EASE.drift, clearProps: 'transform' },
+      { opacity: 1, y: 0, duration: 0.55, delay: 0.42, ease: EASE.drift, clearProps: 'transform' },
     )
   }
 
@@ -168,12 +220,15 @@ export function createGift(el: HTMLElement): ActDefinition {
   )
   io.observe(el)
 
-
   ;(window as unknown as { __gift?: () => unknown }).__gift = () => ({
     opened,
     bits: bits.length,
     active,
-    summary: `礼物盒 · 打开 ${opened} 次 · 彩纸 ${bits.length} 片 · 当前幕=${active}`,
+    cards: cardEls.length,
+    covered: el.querySelectorAll('.gift__card.is-covered').length,
+    summary:
+      `礼物盒 · 打开 ${opened} 次 · 彩纸 ${bits.length} 片 · 飞出 ${cardEls.length} 张` +
+      `（盖住 ${el.querySelectorAll('.gift__card.is-covered').length} 张）· 当前幕=${active}`,
   })
 
   return { id: 'gift', el, setState, enter }

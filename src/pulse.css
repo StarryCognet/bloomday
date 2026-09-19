@@ -117,10 +117,59 @@
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 16%;
+  /* 16% 会被底部常驻的歌词层盖住（它占最下 190px），抬到 32% */
+  bottom: 32%;
   z-index: 2;
   margin: 0;
   text-align: center;
   opacity: 0;
   color: var(--c-mid);
+}
+
+/* ── 礼物盒里飞出来的四张图 ─────────────────────────────────
+   绝对定位成一个"扇子"的落位点，初始藏在盒子里（由 gsap 从 y:120 飞上来）。 */
+.gift__cards {
+  /* 放在流里、贴着盒子上方：之前锚在幕的百分比上，结果整把扇子被视口顶边切掉 */
+  position: relative;
+  width: 100%;
+  height: 158px;
+  z-index: 3;
+  pointer-events: none;
+}
+.gift__card {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 118px;
+  height: 148px;
+  margin: 0 0 0 -59px;
+  overflow: hidden;
+  background: var(--c-white);
+  clip-path: var(--clip-card);
+  box-shadow: inset 0 0 0 var(--stroke-bold) var(--c-ink);
+  opacity: 0;
+}
+.gift__card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 盖住的那两张：只显示一块蓝底 + 问号，内容完全看不到。
+   没有任何点击/解锁行为 —— 留给哥哥之后自己弄。 */
+.gift__cover {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--c-mid);
+  background-image: radial-gradient(var(--c-white) var(--ht-dot), transparent var(--ht-dot));
+  background-size: var(--ht-size) var(--ht-size);
+}
+.gift__cover b {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--c-white);
+  text-shadow: 2px 2px 0 var(--c-ink);
 }

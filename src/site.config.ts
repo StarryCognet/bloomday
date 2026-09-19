@@ -111,6 +111,17 @@ export const SITE = {
       label: 'ONE MORE THING',
       line: '还有个东西。点一下。',
       after: '拿好了。',
+      /**
+       * 盒子里飞出来的四张图。
+       * hidden: true 的会被盖住、不露内容，而且**没有任何解锁开关** ——
+       * 留给哥哥之后自己决定怎么揭。
+       */
+      cards: [
+        { src: './gift/gift-1.jpg', hidden: false },
+        { src: './gift/gift-2.jpg', hidden: true },
+        { src: './gift/gift-3.jpg', hidden: true },
+        { src: './gift/gift-4.jpg', hidden: false },
+      ],
     },
 
     /** 第四幕 · 角色与照片 */

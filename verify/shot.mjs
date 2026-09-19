@@ -183,8 +183,15 @@ if (opt.scrollBefore) {
 if (opt.scrollToSel) {
   await send('Runtime.evaluate', {
     awaitPromise: true,
-    expression: `new Promise(function(res){var el=document.querySelector(${JSON.stringify(opt.scrollToSel)});if(!el)return res('NOT_FOUND');var target=el.getBoundingClientRect().top+window.scrollY+el.offsetHeight*0.25;var n=0;var id=setInterval(function(){var d=target-window.scrollY;if(Math.abs(d)<40||n++>60){clearInterval(id);setTimeout(function(){res(Math.round(window.scrollY))},700);return}window.dispatchEvent(new WheelEvent('wheel',{deltaY:Math.max(-900,Math.min(900,d)),bubbles:true,cancelable:true}))},70)})`,
+    expression: `new Promise(function(res){var el=document.querySelector(${JSON.stringify(opt.scrollToSel)});if(!el)return res('NOT_FOUND');var r=el.getBoundingClientRect();var target=r.top+window.scrollY-(window.innerHeight-r.height)/2;var n=0;var id=setInterval(function(){var d=target-window.scrollY;if(Math.abs(d)<40||n++>60){clearInterval(id);setTimeout(function(){res(Math.round(window.scrollY))},700);return}window.dispatchEvent(new WheelEvent('wheel',{deltaY:Math.max(-900,Math.min(900,d)),bubbles:true,cancelable:true}))},70)})`,
   })
+}
+
+/** --tapSel=<选择器> ：截图前点一下（比如"点开礼物盒，再拍飞出来的图"）。
+    原来的顺序只能"先点后滚"，拍不到"滚到位之后再点"的结果。 */
+if (opt.tapSel) {
+  await clickAt(opt.tapSel)
+  await sleep(Number(opt.tapWait ?? 1100))
 }
 
 if (burst) {
