@@ -25,18 +25,6 @@
   background: linear-gradient(to top, var(--c-white) 0%, var(--c-white) 46%, transparent 100%);
   opacity: 0.94;
 }
-/* P3 的斜切边：一条细的蓝色斜线压在底衬上沿 */
-.lyr__edge {
-  position: absolute;
-  left: -6%;
-  right: -6%;
-  bottom: 150px;
-  height: 2px;
-  background: var(--c-mid);
-  opacity: 0.5;
-  transform: skewX(var(--skew-steep));
-  transform-origin: left center;
-}
 
 .lyr__box {
   position: relative;

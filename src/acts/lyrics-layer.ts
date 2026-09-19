@@ -55,7 +55,6 @@ export function createLyricsLayer(audio: HTMLAudioElement | null): LyricsLayerHa
   root.setAttribute('aria-hidden', 'true')
   root.innerHTML = `
     <span class="lyr__scrim"></span>
-    <span class="lyr__edge"></span>
     <div class="lyr__box">
       <p class="lyr__jp" id="lyr-jp"></p>
       <p class="lyr__cn" id="lyr-cn"></p>

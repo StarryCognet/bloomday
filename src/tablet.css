@@ -35,9 +35,6 @@
   .lyr__scrim {
     height: 330px;
   }
-  .lyr__edge {
-    bottom: 270px;
-  }
   .lyr__jp {
     font-size: clamp(1.35rem, 2.7vw, 2rem);
   }
