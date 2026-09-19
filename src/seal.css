@@ -266,6 +266,41 @@
 }
 
 /* ── 底部 SCROLL ────────────────────────────────────────── */
+/* 第一拍：只看序章，封印文字全藏着 */
+.seal.is-stowed .seal__meta,
+.seal.is-stowed .seal__nav,
+.seal.is-stowed .seal__logo,
+.seal.is-stowed .seal__greeting,
+.seal.is-stowed .seal__cta,
+.seal.is-stowed .seal__scroll,
+.seal.is-stowed .seal__corner {
+  opacity: 0;
+  pointer-events: none;
+}
+.seal__meta,
+.seal__nav,
+.seal__logo,
+.seal__greeting,
+.seal__cta {
+  transition: opacity 0.6s ease;
+}
+/* 「看完点一下」：只在第一拍出现 */
+.seal__tap {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 46px);
+  z-index: 6;
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  color: var(--c-white);
+  opacity: 0;
+  pointer-events: none;
+}
+.seal.is-stowed .seal__tap {
+  opacity: 0.8;
+}
 .seal__scroll {
   position: absolute;
   left: 50%;
@@ -340,4 +375,10 @@
 }
 .seal__greeting {
   text-shadow: 0 2px 14px var(--c-ink);
+}
+
+/* 序章的 iframe 铺满整个封印，点击会被它吃掉 —— 那样"点任意处显字"永远不触发。
+   序章本来也不该可交互（播放器控件已被隐藏），关掉它的指针事件即可。 */
+.seal__ark iframe {
+  pointer-events: none;
 }

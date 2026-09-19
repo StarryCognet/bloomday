@@ -368,3 +368,59 @@ body::after {
     opacity: 0.8;
   }
 }
+
+/* ── 生日站改造：清掉明日方舟的功能 UI ──────────────────────
+   校园商店 / 旅行计划 / Daily Fortune / 今日答案 / 巡学路 / 当期干员查看 /
+   Route / School …… 这些是活动页面的功能入口，跟生日毫无关系，只留纯展示。
+
+   用 CSS 而不是改 scene-data 的 active：那些节点的显隐是**动画曲线驱动的**，
+   静态改 active 会被曲线覆盖回去；CSS 优先级更硬。 */
+[data-path="root_bg/group_bkg_2/color_text_1/text_ton"],
+[data-path="root_bg/group_bkg_2/color_text_1/text_nom"],
+[data-path="root_bg/group_bkg_2/color_text_2/text_ton"],
+[data-path="root_bg/group_bkg_2/color_text_2/text_nom"],
+[data-path="root_bg/group_bkg_2/sprite_right/img"],
+[data-path="root_bg/group_bkg_2/bg_2/mp3/img_2"],
+[data-path="root_bg/group_bkg_2/bg_2/mp3/img_3"],
+[data-path="root_bg/group_bkg_2/bg_2/mp3/root_rotate/img_1"],
+[data-path="root_bg/group_bkg_2/group_music/music_line/move/container/01"],
+[data-path="root_bg/group_bkg_2/group_music/music_line/move/container/02"],
+[data-path="root_bg/group_bkg_2/group_music/music_line/move/container/03"],
+[data-path="root_bg/group_bkg_2/group_music/music_line/move/container/04"],
+[data-path="root_bg/group_bkg_2/group_music/music_line/move/container/05"],
+[data-path="root_bg/group_bkg_2/group_music/desc_2"],
+[data-path="root_bg/group_bkg_2/group_music/desc_3"],
+[data-path="root_bg/group_bkg_2/color_text_3/text_ton"],
+[data-path="root_bg/group_bkg_2/color_text_3/text_ton/text_ton"],
+[data-path="root_bg/group_bkg_2/color_text_3/text_nom"],
+[data-path="root_bg/group_bkg_2/color_text_3/text_nom/text_nom"],
+[data-path="root_bg/group_bkg_2/color_text_3/desc_1"],
+[data-path="root_bg/group_bkg_2/color_text_3/desc_2"],
+[data-path="panel_front_ui/group_left/btn_fav/img_fav"],
+[data-path="panel_front_ui/group_left/btn_card/normal/img_icrcle"],
+[data-path="panel_front_ui/group_left/btn_card/normal/group_glass/01"],
+[data-path="panel_front_ui/group_left/btn_card/normal/group_glass/02"],
+[data-path="panel_front_ui/group_left/btn_card/normal/group_glass/03"],
+[data-path="panel_front_ui/group_left/btn_card/normal/group_glass/04"],
+[data-path="panel_front_ui/group_left/btn_card/normal/group_glass/05"],
+[data-path="panel_front_ui/group_left/btn_card/normal/group_glass/06"],
+[data-path="panel_front_ui/group_left/btn_card/normal/group_glass/07"],
+[data-path="panel_front_ui/group_left/btn_card/normal/img_daily"],
+[data-path="panel_front_ui/group_left/btn_card/normal/img_fortune"],
+[data-path="panel_front_ui/group_left/btn_card/normal/desc_card/card/img_1"],
+[data-path="panel_front_ui/group_left/btn_card/normal/desc_card/card/img_add"],
+[data-path="panel_front_ui/group_left/btn_card/normal/desc_card/card/img_2"],
+[data-path="panel_front_ui/group_left/btn_card/end/img_end"],
+[data-path="panel_front_ui/group_left/btn_card/lock/img_lock"],
+[data-path="panel_front_ui/group_right/btn_shop/img_shop"],
+[data-path="panel_front_ui/group_right/btn_shop/shop_token"],
+[data-path="panel_front_ui/group_right/btn_mission/img_mission"],
+[data-path="panel_front_ui/group_right/btn_zone_ex/normal/img_zone_ex"],
+[data-path="panel_front_ui/group_right/btn_zone_ex/normal/trackpoint"],
+[data-path="panel_front_ui/group_right/btn_zone_ex/lock/img_zone_ex_lock"],
+[data-path="panel_front_ui/group_right/btn_zone_ex/end/img_zone_ex_end"],
+[data-path="panel_front_ui/group_right/btn_zone/normal/img_zone"],
+[data-path="panel_front_ui/group_right/btn_zone/end/img_zone_end"],
+[data-path="panel_circle_part/now_play"] {
+  display: none !important;
+}
