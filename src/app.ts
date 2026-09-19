@@ -92,7 +92,7 @@ app.innerHTML = `
       <span class="seal__cta-text">${SEAL.cta}</span>
     </button>
     <p class="seal__scroll">SCROLL</p>
-    <p class="seal__tap">看完点一下</p>
+    <p class="seal__tap">点一下开始</p>
   </main>
   <section class="act" id="act-mv"></section>
   <section class="act" id="act-blessing"></section>
@@ -263,9 +263,6 @@ if (allowResident()) {
 
 /* ── 点击进入 ───────────────────────────────────────────────
    音频 play() 必须发生在用户手势的同一个调用栈里，否则 iOS/微信不解锁 */
-/** 封印文字是否已经显出来（第一拍：只放序章，文字藏着） */
-let revealed = false
-
 let started = false
 
 function playBreak(): Promise<void> {
@@ -299,27 +296,8 @@ function playBreak(): Promise<void> {
   })
 }
 
-/** 第二拍：点屏幕任意处，封印文字显出来 + 给序章解锁声音并从头播 */
-function reveal(): void {
-  if (revealed) return
-  revealed = true
-  sealEl.classList.remove('is-stowed')
-  // 文字淡入交给 CSS，这里只补一个"砸下来"的力度
-  charSlam(dateEl, { direction: 'up', duration: 0.7, intensity: 0.9, stagger: 0.07 })
-  const frame = document.getElementById('ark-frame') as HTMLIFrameElement | null
-  try {
-    const d = frame?.contentDocument
-    d?.getElementById('audio-toggle')?.click() // 解锁声音（同时开始加载）
-    d?.getElementById('replay')?.click() // 从头播，让画面和声音对得上
-  } catch {
-    // 同源应该没问题；结构变了也不该拦住入场
-  }
-}
-
 function enter(): void {
   if (started) return
-  // 还没显字就点「点我开始」的话，先显字
-  if (!revealed) reveal()
   started = true
   cta.disabled = true
 
@@ -347,8 +325,8 @@ function enter(): void {
 }
 
 cta.addEventListener('click', enter)
-// 第一拍：点屏幕任意处显字。用捕获阶段，免得被封印里的元素吃掉。
-sealEl.addEventListener('click', reveal, { capture: true })
+// 序章之后点屏幕任意处直接进站。用捕获阶段，免得被封印里的元素吃掉。
+sealEl.addEventListener('click', enter, { capture: true })
 // 一进来先把文字藏着，只放序章
 sealEl.classList.add('is-stowed')
 
