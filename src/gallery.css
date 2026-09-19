@@ -181,3 +181,11 @@
 #act-gallery {
   overflow: visible;
 }
+
+/* 手机上拖到图片会触发原生"图片拖拽"，表现同样是"滑不动"。
+   轨道现在由竖向滚动驱动，图片本身不该有任何拖拽/选中行为。 */
+.gcard__img {
+  -webkit-user-drag: none;
+  user-select: none;
+  touch-action: pan-y;
+}

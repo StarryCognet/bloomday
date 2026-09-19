@@ -58,7 +58,7 @@ export function createGallery(el: HTMLElement): ActDefinition {
         <p class="gal__lead">${GALLERY.lead}</p>
         <p class="gal__hint t-label">${GALLERY.hint}</p>
       </header>
-      <div class="gal__track" id="gal-track" data-lenis-prevent>
+      <div class="gal__track" id="gal-track">
         ${GALLERY.items
           .map(
             (it, i) => `<article class="gcard" data-g="c${i + 1}">
